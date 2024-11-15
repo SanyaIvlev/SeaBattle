@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeaBattle", "SeaBattle\SeaBattle.csproj", "{5F864781-99D4-4A72-9A05-707ABC1C5F71}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5F864781-99D4-4A72-9A05-707ABC1C5F71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F864781-99D4-4A72-9A05-707ABC1C5F71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F864781-99D4-4A72-9A05-707ABC1C5F71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F864781-99D4-4A72-9A05-707ABC1C5F71}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
