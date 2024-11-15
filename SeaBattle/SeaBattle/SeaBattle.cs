@@ -31,16 +31,16 @@ public class SeaBattle
     {
         GenerateMap();
         DrawMap();
+        
         while (!IsGameOver())
         {
-            GetInput();
+            ProcessInput();
             Logic();
             DrawMap();
+            WriteTries();
         }
-        
-        Console.WriteLine("Game Over");
     }
-    
+
     public bool IsWon()
         => _shipsCellsDestructed == _shipsCellsCount;
 
@@ -126,7 +126,10 @@ public class SeaBattle
             
             Console.WriteLine();
         }
-        
+    }
+    
+    private void WriteTries()
+    {
         Console.WriteLine("Tries left : " + triesLeft);
     }
 
@@ -162,7 +165,7 @@ public class SeaBattle
         TryToMoveSelector(newX, newY);
     }
 
-    private void GetInput()
+    private void ProcessInput()
     {
         (_dx, _dy) = (0, 0);
 
