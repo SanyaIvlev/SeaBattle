@@ -9,16 +9,23 @@ public class SeaBattle
     private char[,] _battleField = new char[_height, _width];
     private char[,] _visibleField = new char[_height, _width];
     
-    List<string> ships = new List<string>(10) { "####", "###", "###", "##", "##", "##", "#", "#", "#", "#"};
+    private List<string> _ships = new List<string>(10) { "####", "###", "###", "##", "##", "##", "#", "#", "#", "#"};
+    private int _shipsCellsCount = 20;
+    private int _shipsCellsDestructed = 0;
     
-    Position selector = new Position();
-    private int dx = 0, dy = 0;
+    Position _selector = new Position();
+    private int _dx = 0, _dy = 0;
     
-    private char shipCell = '#';
-    private char emptyCell = '.';
-    private char selectorSign = '*';
+    private char _shipCell = '#';
+    private char _destructedShipCell = 'X';  
+    private char _emptyCell = '.';
+    private char _selectorSign = '*';
+
+    private int triesLeft = 60;
+
+    private const int ENTER = 13;
     
-    private Random random = new Random();
+    private Random _random = new Random();
 
     public void RunGame()
     {
@@ -33,6 +40,13 @@ public class SeaBattle
         
         Console.WriteLine("Game Over");
     }
+    
+    public bool IsWon()
+        => _shipsCellsDestructed == _shipsCellsCount;
+
+    private bool IsLost()
+        => triesLeft <= 0;
+
 
     private void GenerateMap()
     {
@@ -42,7 +56,7 @@ public class SeaBattle
     }
     private void PlaceShips()
     {
-        foreach (string ship in ships)
+        foreach (string ship in _ships)
         {
             bool isHorizontal = GetRandomState();
             bool isPlaced = false;
@@ -54,7 +68,7 @@ public class SeaBattle
                 {
                     for (int i = 0; i < ship.Length; i++)
                     {
-                        _battleField[randomCell.y, randomCell.x + i] = shipCell;
+                        _battleField[randomCell.y, randomCell.x + i] = _shipCell;
                     }
                     isPlaced = true;
                 }
@@ -62,7 +76,7 @@ public class SeaBattle
                 {
                     for (int i = 0; i < ship.Length; i++)
                     {
-                        _battleField[randomCell.y + i, randomCell.x] = shipCell;
+                        _battleField[randomCell.y + i, randomCell.x] = _shipCell;
                     }
 
                     isPlaced = true;
@@ -77,7 +91,7 @@ public class SeaBattle
         {
             for (int j = 0; j < _width; j++)
             {
-                _battleField[i, j] = emptyCell;
+                _battleField[i, j] = _emptyCell;
             }
         }
     }
@@ -87,7 +101,7 @@ public class SeaBattle
         {
             for (int j = 0; j < _width; j++)
             {
-                _visibleField[i, j] = emptyCell;
+                _visibleField[i, j] = _emptyCell;
             }
         }
     }
@@ -102,9 +116,9 @@ public class SeaBattle
             {
                 char symbol = _visibleField[i, j];
                 
-                if ((j, i) == (selector.x, selector.y))
+                if ((j, i) == (_selector.x, _selector.y))
                 {
-                    symbol = selectorSign; 
+                    symbol = _selectorSign; 
                 }
                 
                 Console.Write(symbol);
@@ -112,13 +126,15 @@ public class SeaBattle
             
             Console.WriteLine();
         }
+        
+        Console.WriteLine("Tries left : " + triesLeft);
     }
 
     private bool CanPlaceHorizontalShip(int shipLength, Position randomCell)
     {
         for (int i = 0; i < shipLength; i++)
         {
-            if (randomCell.x + i >= _width || _battleField[randomCell.y, randomCell.x + i] == shipCell)
+            if (randomCell.x + i >= _width || _battleField[randomCell.y, randomCell.x + i] == _shipCell)
             {
                 return false;
             }
@@ -131,7 +147,7 @@ public class SeaBattle
     {
         for (int i = 0; i < shipLength; i++)
         {
-            if (randomCell.y + i >= _height || _battleField[randomCell.y + i, randomCell.x] == shipCell)
+            if (randomCell.y + i >= _height || _battleField[randomCell.y + i, randomCell.x] == _shipCell)
             {
                 return false;
             }
@@ -142,16 +158,17 @@ public class SeaBattle
 
     private void Logic()
     {
-        var (newX, newY) = (selector.x + dx, selector.y + dy);
+        var (newX, newY) = (_selector.x + _dx, _selector.y + _dy);
         TryToMoveSelector(newX, newY);
     }
+
     private void GetInput()
     {
-        (dx, dy) = (0, 0);
+        (_dx, _dy) = (0, 0);
 
         var input = Console.ReadKey().KeyChar;
 
-        (dx, dy) = input switch
+        (_dx, _dy) = input switch
         {
             'W' or 'w' => (0, -1),
             'A' or 'a' => (-1, 0),
@@ -159,6 +176,11 @@ public class SeaBattle
             'D' or 'd' => (1, 0),
             _ => (0, 0)
         };
+
+        if (input == (char)ENTER)
+        {
+            TryToDestructCell();
+        }
     }
     
     private void TryToMoveSelector(int x, int y)
@@ -174,19 +196,31 @@ public class SeaBattle
 
     private void MoveSelector(int x, int y)
     {
-        selector.x = x;
-        selector.y = y;
+        _selector.x = x;
+        _selector.y = y;
     }
 
+    private void TryToDestructCell()
+    {
+        if (_battleField[_selector.y, _selector.x] == _shipCell)
+        {
+            _visibleField[_selector.y, _selector.x] = _destructedShipCell;
+            _shipsCellsDestructed++;
+        }
+
+        triesLeft--;
+    }
+    
     private bool IsGameOver()
-        => false;
+        => IsWon() || IsLost();
+    
     private bool GetRandomState()
-        => random.Next(2) == 1 ? true : false;
+        => _random.Next(2) == 1;
 
     private Position GetRandomCell()
     {
-        int x = random.Next(_width);
-        int y = random.Next(_height);
+        int x = _random.Next(_width);
+        int y = _random.Next(_height);
         
         return new Position(x, y);
     }
