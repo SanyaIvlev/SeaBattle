@@ -11,15 +11,27 @@ public class SeaBattle
     
     List<string> ships = new List<string>(10) { "####", "###", "###", "##", "##", "##", "#", "#", "#", "#"};
     
-    private Random random = new Random();
+    Position selector = new Position();
+    private int dx = 0, dy = 0;
     
     private char shipCell = '#';
     private char emptyCell = '.';
+    private char selectorSign = '*';
+    
+    private Random random = new Random();
 
     public void RunGame()
     {
         GenerateMap();
         DrawMap();
+        while (!IsGameOver())
+        {
+            GetInput();
+            Logic();
+            DrawMap();
+        }
+        
+        Console.WriteLine("Game Over");
     }
 
     private void GenerateMap()
@@ -75,21 +87,29 @@ public class SeaBattle
         {
             for (int j = 0; j < _width; j++)
             {
-                // _visibleField[i, j] = emptyCell;
-                _visibleField[i, j] = _battleField[i,j];
+                _visibleField[i, j] = emptyCell;
             }
         }
     }
 
     private void DrawMap()
     {
+        Console.Clear();
+        
         for (int i = 0; i < _height; i++)
         {
             for (int j = 0; j < _width; j++)
             {
                 char symbol = _visibleField[i, j];
+                
+                if ((j, i) == (selector.x, selector.y))
+                {
+                    symbol = selectorSign; 
+                }
+                
                 Console.Write(symbol);
             }
+            
             Console.WriteLine();
         }
     }
@@ -120,6 +140,46 @@ public class SeaBattle
         return true;
     }
 
+    private void Logic()
+    {
+        var (newX, newY) = (selector.x + dx, selector.y + dy);
+        TryToMoveSelector(newX, newY);
+    }
+    private void GetInput()
+    {
+        (dx, dy) = (0, 0);
+
+        var input = Console.ReadKey().KeyChar;
+
+        (dx, dy) = input switch
+        {
+            'W' or 'w' => (0, -1),
+            'A' or 'a' => (-1, 0),
+            'S' or 's' => (0, 1),
+            'D' or 'd' => (1, 0),
+            _ => (0, 0)
+        };
+    }
+    
+    private void TryToMoveSelector(int x, int y)
+    {
+        if (CanMoveSelector(x, y))
+        {
+            MoveSelector(x, y);
+        }
+    }
+
+    private bool CanMoveSelector(int x, int y)
+        => x >= 0 && y >= 0 && x < _width && y < _height;
+
+    private void MoveSelector(int x, int y)
+    {
+        selector.x = x;
+        selector.y = y;
+    }
+
+    private bool IsGameOver()
+        => false;
     private bool GetRandomState()
         => random.Next(2) == 1 ? true : false;
 
