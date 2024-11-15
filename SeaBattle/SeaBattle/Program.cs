@@ -1,3 +1,11 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using SeaBattleClass;
 
-Console.WriteLine("Hello, Wor");
+static class Program
+{
+    static void Main(string[] args)
+    {
+        SeaBattle seaBattle = new SeaBattle();
+        
+        seaBattle.RunGame();
+    }
+}
