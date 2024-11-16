@@ -13,8 +13,8 @@ public class SeaBattle
     private int _shipsCellsCount = 20;
     private int _shipsCellsDestructed = 0;
     
-    Position _selector = new Position();
-    private int _dx = 0, _dy = 0;
+    private Position _selector = new Position();
+    private Position _delta = new Position();
     
     private char _shipCell = '#';
     private char _destructedShipCell = 'X';  
@@ -161,17 +161,17 @@ public class SeaBattle
 
     private void Logic()
     {
-        var (newX, newY) = (_selector.x + _dx, _selector.y + _dy);
+        var (newX, newY) = (_selector.x + _delta.x, _selector.y + _delta.y);
         TryToMoveSelector(newX, newY);
     }
 
     private void ProcessInput()
     {
-        (_dx, _dy) = (0, 0);
+        (_delta.x, _delta.y) = (0, 0);
 
         var input = Console.ReadKey().KeyChar;
 
-        (_dx, _dy) = input switch
+        (_delta.x, _delta.y) = input switch
         {
             'W' or 'w' => (0, -1),
             'A' or 'a' => (-1, 0),
