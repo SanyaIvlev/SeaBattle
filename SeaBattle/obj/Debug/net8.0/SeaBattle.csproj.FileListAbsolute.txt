@@ -12,3 +12,4 @@ C:\Users\aivle\Documents\SeaBattle\SeaBattle\SeaBattle\obj\Debug\net8.0\refint\S
 C:\Users\aivle\Documents\SeaBattle\SeaBattle\SeaBattle\obj\Debug\net8.0\SeaBattle.pdb
 C:\Users\aivle\Documents\SeaBattle\SeaBattle\SeaBattle\obj\Debug\net8.0\SeaBattle.genruntimeconfig.cache
 C:\Users\aivle\Documents\SeaBattle\SeaBattle\SeaBattle\obj\Debug\net8.0\ref\SeaBattle.dll
+C:\Users\aivle\Documents\SeaBattle\SeaBattle\SeaBattle\obj\Debug\net8.0\SeaBattle.sourcelink.json

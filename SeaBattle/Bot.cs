@@ -2,14 +2,13 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace SeaBattle;
 
-public class Enemy
+public class Bot
 {
+    public int ShipCellsDestroyed = 0;
+    
     public Field BattleField = new();
     
-    public bool IsEnemyTurn = false;
-    
     private List<(int x, int y)> _checkedShips = new List<(int x, int y)>();
-    private int _shipCellsDestroyed = 0;
     
     private Random _random = new();
 
@@ -50,13 +49,11 @@ public class Enemy
         
         if (shotCell.hasShip)
         {
-            _shipCellsDestroyed++;
+            ShipCellsDestroyed++;
         }
         
         playerField.Cells[cell.y, cell.x].hasShot = true;
         
         _checkedShips.Add(cell);
-        
-        IsEnemyTurn = false;
     }
 }

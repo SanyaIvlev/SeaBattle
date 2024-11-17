@@ -3,7 +3,7 @@ namespace SeaBattle;
 public class Game
 {
     private Player _player = new();
-    private Enemy _bot = new();
+    private Bot _bot = new();
     
     private Render _render = new();
 
@@ -11,7 +11,7 @@ public class Game
     {
         InitializeFields();
         
-        while (true)
+        while (!IsGameEnded())
         {
             _render.DrawMap(ref _player, ref _bot.BattleField.Cells);
             
@@ -26,6 +26,15 @@ public class Game
             
             _bot.Logic(ref _player.BattleField);
         }
+
+        if (_player.ShipCellsDestroyed == Field.ShipsCount)
+        {
+            Console.WriteLine("Player won the game!");
+        }
+        else if (_bot.ShipCellsDestroyed == Field.ShipsCount)
+        {
+            Console.WriteLine("Bot won the game! You lost :(");
+        }
     }
 
     private void InitializeFields()
@@ -36,4 +45,7 @@ public class Game
         Field botField = _bot.BattleField;
         botField.GenerateField();
     }
+    
+    private bool IsGameEnded()
+        => _player.ShipCellsDestroyed == Field.ShipsCount || _bot.ShipCellsDestroyed == Field.ShipsCount; 
 }

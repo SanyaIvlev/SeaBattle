@@ -5,10 +5,11 @@ public class Field
     public const int Height = 10;
     public const int Width = 10;
 
+    public const int ShipsCount = 20;
+    private List<string> _ships = new(10) { "####", "###", "###", "##", "##", "##", "#", "#", "#", "#" };
+    
     public Cell[,] Cells = new Cell[Height, Width];
 
-    private List<string> _ships = new() { "####", "###", "###", "##", "##", "##", "#", "#", "#", "#" };
-    private int _shipsCount = 20;
 
     private Random _random = new();
     
@@ -37,7 +38,7 @@ public class Field
         }
     }
     public int GetShipsNumber()
-        => _shipsCount;
+        => ShipsCount;
     
     public (int x, int y) GetRandomCell()
     {

@@ -2,6 +2,8 @@ namespace SeaBattle;
 
 public class Player
 {
+    public int ShipCellsDestroyed = 0;
+    
     public Field BattleField = new();
 
     public bool IsPlayerTurn = true;
@@ -9,7 +11,6 @@ public class Player
     private (int x, int y) _position;
     private (int x, int y) _delta;
 
-    private int _shipCellsDestroyed = 0;
     
     public (int x, int y) Position => _position;
     
@@ -57,7 +58,7 @@ public class Player
         
         if (shotCell.hasShip)
         {
-            _shipCellsDestroyed++;
+            ShipCellsDestroyed++;
         }
         
         enemyField.Cells[_position.y, _position.x].hasShot = true;
