@@ -1,4 +1,4 @@
-using FieldClass;
+using System.Reflection.Metadata.Ecma335;
 
 namespace SeaBattle;
 
@@ -6,24 +6,26 @@ public class Enemy
 {
     public Field BattleField = new();
     
-    private (int x, int y)[] _checkedShips = new (int, int)[0];
+    public bool IsEnemyTurn = false;
+    
+    private List<(int x, int y)> _checkedShips = new List<(int x, int y)>();
     private int _shipCellsDestroyed = 0;
     
     private Random _random = new();
 
-    public void Logic()
+    public void Logic(ref readonly Field playerField)
     {
-        (int x, int y) shotCell = GetUncheckedCell();
-        Shot(shotCell);
-    }s
+        (int x, int y) shotCell = GetUncheckedCell(playerField);
+        Shot(shotCell, playerField);
+    }
     
-    private (int x, int y) GetUncheckedCell()
+    private (int x, int y) GetUncheckedCell(ref readonly Field playerField)
     {
-        (int x, int y) = BattleField.GetRandomCell();
+        (int x, int y) = playerField.GetRandomCell();
         
         while (!IsUncheckedCell(x, y))
         {
-            (x, y) = BattleField.GetRandomCell();
+            (x, y) = playerField.GetRandomCell();
         }
         
         return (x, y);
@@ -42,13 +44,19 @@ public class Enemy
         return true;
     }
 
-    private void Shot((int x, int y) cell)
+    private void Shot((int x, int y) cell, ref readonly Field playerField)
     {
-        if (BattleField.Cells[cell.y, cell.x].hasShip)
+        Cell shotCell = playerField.Cells[cell.y, cell.x];
+        
+        if (shotCell.hasShip)
         {
             _shipCellsDestroyed++;
         }
         
-        BattleField.Cells[cell.y, cell.x].hasShot = true;
+        playerField.Cells[cell.y, cell.x].hasShot = true;
+        
+        _checkedShips.Add(cell);
+        
+        IsEnemyTurn = false;
     }
 }

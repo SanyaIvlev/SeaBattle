@@ -1,6 +1,4 @@
-using CellClass;
-
-namespace FieldClass;
+namespace SeaBattle;
 
 public class Field
 {
@@ -13,8 +11,8 @@ public class Field
     private int _shipsCount = 20;
 
     private Random _random = new();
-
-    public Field()
+    
+    public void GenerateField()
     {
         foreach (string ship in _ships)
         {
@@ -38,7 +36,6 @@ public class Field
             }
         }
     }
-    
     public int GetShipsNumber()
         => _shipsCount;
     
@@ -67,8 +64,7 @@ public class Field
     {
         for (int i = 0; i < shipLength; i++)
         {
-            Cell currentCell = Cells[randomCell.y, randomCell.x + i];
-            currentCell.hasShip = true;
+            Cells[randomCell.y, randomCell.x + i].hasShip = true;
         }
     }
     
@@ -89,8 +85,7 @@ public class Field
     {
         for (int i = 0; i < shipLength; i++)
         {
-            Cell currentCell = Cells[randomCell.y + i, randomCell.x];
-            currentCell.hasShip = true;
+            Cells[randomCell.y + i, randomCell.x].hasShip = true;
         }
 
     }

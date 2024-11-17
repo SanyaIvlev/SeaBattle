@@ -1,7 +1,4 @@
-using CellClass;
-using FieldClass;
-
-namespace PlayerClass;
+namespace SeaBattle;
 
 public class Player
 {
@@ -13,7 +10,9 @@ public class Player
     private (int x, int y) _delta;
 
     private int _shipCellsDestroyed = 0;
-
+    
+    public (int x, int y) Position => _position;
+    
     public void Logic()
     {
         int newX = _position.x + _delta.x;
@@ -22,24 +21,13 @@ public class Player
         TryToMove(newX, newY);
     }
     
-    public void ProcessInput()
+    public void ProcessInput(ref readonly Field enemyField)
     {
         var input = Console.ReadKey();
         var key = input.KeyChar;
         
         ProcessDirection(key);
-        ProcessShot(key);
-    }
-
-    public void DrawField()
-    {
-        for (int i = 0; i < Field.Height; i++)
-        {
-            for (int j = 0; j < Field.Width; j++)
-            {
-                
-            }
-        }
+        ProcessShot(key, enemyField);
     }
     private void ProcessDirection(char input)
     {
@@ -55,24 +43,24 @@ public class Player
         };
     }
     
-    private void ProcessShot(char input)
+    private void ProcessShot(char input, ref readonly Field enemyField)
     {
-        if (input == ' ' && !BattleField.Cells[_position.y, _position.x].hasShot)
+        if (input == ' ' && !enemyField.Cells[_position.y, _position.x].hasShot)
         {
-            Shot();
+            Shot(enemyField);
         }
     }
 
-    private void Shot()
+    private void Shot(ref readonly Field enemyField)
     {
-        Cell shotCell = BattleField.Cells[_position.y, _position.x];
+        Cell shotCell = enemyField.Cells[_position.y, _position.x];
         
         if (shotCell.hasShip)
         {
             _shipCellsDestroyed++;
         }
         
-        shotCell.hasShot = true;
+        enemyField.Cells[_position.y, _position.x].hasShot = true;
         IsPlayerTurn = false;
 
     }
