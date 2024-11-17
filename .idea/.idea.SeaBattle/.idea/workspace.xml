@@ -8,17 +8,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4d2e3f93-548c-4d6c-8f5c-d856857d226d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/SeaBattle/LabeledCell.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SeaBattle/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SeaBattle/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SeaBattle/Cell.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SeaBattle/Cell.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SeaBattle/Game.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SeaBattle/Game.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SeaBattle/Render.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SeaBattle/Render.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SeaBattle/bin/Debug/net8.0/SeaBattle.dll" beforeDir="false" afterPath="$PROJECT_DIR$/SeaBattle/bin/Debug/net8.0/SeaBattle.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SeaBattle/bin/Debug/net8.0/SeaBattle.exe" beforeDir="false" afterPath="$PROJECT_DIR$/SeaBattle/bin/Debug/net8.0/SeaBattle.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SeaBattle/bin/Debug/net8.0/SeaBattle.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/SeaBattle/bin/Debug/net8.0/SeaBattle.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SeaBattle/obj/Debug/net8.0/SeaBattle.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SeaBattle/obj/Debug/net8.0/SeaBattle.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SeaBattle/obj/Debug/net8.0/SeaBattle.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/SeaBattle/obj/Debug/net8.0/SeaBattle.AssemblyInfoInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SeaBattle/obj/Debug/net8.0/SeaBattle.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/SeaBattle/obj/Debug/net8.0/SeaBattle.csproj.CoreCompileInputs.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SeaBattle/obj/Debug/net8.0/SeaBattle.dll" beforeDir="false" afterPath="$PROJECT_DIR$/SeaBattle/obj/Debug/net8.0/SeaBattle.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SeaBattle/obj/Debug/net8.0/SeaBattle.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/SeaBattle/obj/Debug/net8.0/SeaBattle.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SeaBattle/obj/Debug/net8.0/SeaBattle.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/SeaBattle/obj/Debug/net8.0/SeaBattle.sourcelink.json" afterDir="false" />
@@ -48,7 +44,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    ".NET Project.SeaBattle.executor": "Debug",
+    ".NET Project.SeaBattle.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
     "node.js.detected.package.eslint": "true",
@@ -87,7 +83,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1731798788485</updated>
-      <workItem from="1731798790380" duration="17400000" />
+      <workItem from="1731798790380" duration="18090000" />
     </task>
     <servers />
   </component>
@@ -97,37 +93,5 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/SeaBattle/Render.cs</url>
-          <line>136</line>
-          <properties documentPath="C:\Users\aivle\Documents\SeaBattle\SeaBattle\SeaBattle\Render.cs" containingFunctionPresentation="Method 'DrawFields'">
-            <startOffsets>
-              <option value="4373" />
-            </startOffsets>
-            <endOffsets>
-              <option value="4400" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="13" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/SeaBattle/Render.cs</url>
-          <line>140</line>
-          <properties documentPath="C:\Users\aivle\Documents\SeaBattle\SeaBattle\SeaBattle\Render.cs" containingFunctionPresentation="Method 'DrawFields'">
-            <startOffsets>
-              <option value="4494" />
-            </startOffsets>
-            <endOffsets>
-              <option value="4543" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

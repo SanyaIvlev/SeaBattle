@@ -110,7 +110,9 @@ public class Render
     
     
     private void DrawFields()
-    {
+    {   
+        Console.Write("Enemy's field \t\tYour field\n");
+        
         for (int i = 0; i < Field.Height; i++)
         {
             for (int j = 0; j < Field.Width; j++)
@@ -122,7 +124,7 @@ public class Render
                 
             }
             
-            Console.Write("         ");
+            Console.Write("\t\t");
             
             for (int j = 0; j < Field.Width; j++)
             {
