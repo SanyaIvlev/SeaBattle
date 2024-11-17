@@ -1,16 +1,16 @@
 using CellClass;
-using PositionStruct;
 
 namespace FieldClass;
 
 public class Field
 {
-    private const int _height = 10;
-    private const int _width = 10;
+    public const int Height = 10;
+    public const int Width = 10;
 
-    private Cell[,] _cells = new Cell[_height, _width];
+    public Cell[,] Cells = new Cell[Height, Width];
 
     private List<string> _ships = new() { "####", "###", "###", "##", "##", "##", "#", "#", "#", "#" };
+    private int _shipsCount = 20;
 
     private Random _random = new();
 
@@ -22,8 +22,8 @@ public class Field
             bool isPlaced = false;
             
             while (!isPlaced)
-            { 
-                Position randomCell = GetRandomCell();
+            {
+                (int x, int y) randomCell = GetRandomCell();
 
                 if (isHorizontal && CanPlaceHorizontal(ship.Length, randomCell))
                 {
@@ -38,30 +38,23 @@ public class Field
             }
         }
     }
-
-    private void PlaceHorizontal(int shipLength, Position randomCell)
+    
+    public int GetShipsNumber()
+        => _shipsCount;
+    
+    public (int x, int y) GetRandomCell()
     {
-        for (int i = 0; i < shipLength; i++)
-        {
-            Cell currentCell = _cells[randomCell.y, randomCell.x + i];
-            currentCell.hasShip = true;
-        }
+        int x = _random.Next(Width);
+        int y = _random.Next(Height);
+        
+        return (x, y);
     }
-
-    private void PlaceVertical(int shipLength, Position randomCell)
+    
+    private bool CanPlaceHorizontal(int shipLength, (int x, int y)randomCell)
     {
         for (int i = 0; i < shipLength; i++)
         {
-            Cell currentCell = _cells[randomCell.y + i, randomCell.x];
-            currentCell.hasShip = true;
-        }
-
-    }
-    private bool CanPlaceHorizontal(int shipLength, Position randomCell)
-    {
-        for (int i = 0; i < shipLength; i++)
-        {
-            if (randomCell.x + i >= _width || _cells[randomCell.y, randomCell.x + i].hasShip)
+            if (randomCell.x + i >= Width || Cells[randomCell.y, randomCell.x + i].hasShip)
             {
                 return false;
             }
@@ -70,11 +63,20 @@ public class Field
         return true;
     }
     
-    private bool CanPlaceVerticalShip(int shipLength, Position randomCell)
+    private void PlaceHorizontal(int shipLength, (int x, int y)randomCell)
     {
         for (int i = 0; i < shipLength; i++)
         {
-            if (randomCell.y + i >= _height || _cells[randomCell.y + i, randomCell.x].hasShip)
+            Cell currentCell = Cells[randomCell.y, randomCell.x + i];
+            currentCell.hasShip = true;
+        }
+    }
+    
+    private bool CanPlaceVerticalShip(int shipLength, (int x, int y)randomCell)
+    {
+        for (int i = 0; i < shipLength; i++)
+        {
+            if (randomCell.y + i >= Height || Cells[randomCell.y + i, randomCell.x].hasShip)
             {
                 return false;
             }
@@ -82,16 +84,17 @@ public class Field
 
         return true;
     }
+    
+    private void PlaceVertical(int shipLength, (int x, int y)randomCell)
+    {
+        for (int i = 0; i < shipLength; i++)
+        {
+            Cell currentCell = Cells[randomCell.y + i, randomCell.x];
+            currentCell.hasShip = true;
+        }
 
+    }
 
     private bool GetRandomState()
         => _random.Next(2) == 1;
-
-    private Position GetRandomCell()
-    {
-        int x = _random.Next(_width);
-        int y = _random.Next(_height);
-        
-        return new Position(x, y);
-    }
 }
