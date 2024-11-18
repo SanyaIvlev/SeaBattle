@@ -39,32 +39,33 @@ public class Render
             for (int j = 0; j < Field.Width; j++)
             {
                 Cell currentCell = field[i, j];
+
+                LabeledCell drawableCell;
                 
-                char cellSymbol = _emptyCell;
-                ConsoleColor cellColor = _emptyCellColor;
+                drawableCell.Value = _emptyCell;
+                drawableCell.Color = _emptyCellColor;
                 
                 if ((j, i) == playerSelector)
                 {
-                    cellSymbol = _playerSelectorCell;
-                    cellColor = _playerSelectorColor;
+                    drawableCell.Value = _playerSelectorCell;
+                    drawableCell.Color = _playerSelectorColor;
 
                 }
                 else if (currentCell.hasShot)
                 {
                     if (currentCell.hasShip)
                     {
-                        cellSymbol = _destroyedShipCell;
-                        cellColor = _destroyedShipColor;
+                        drawableCell.Value = _destroyedShipCell;
+                        drawableCell.Color = _destroyedShipColor;
                     }
                     else
                     {
-                        cellSymbol = _missingShotCell;
-                        cellColor = _missingShotColor;
+                        drawableCell.Value = _missingShotCell;
+                        drawableCell.Color = _missingShotColor;
                     }
                 }
                 
-                _visibleEnemyMap[i, j].Value = cellSymbol;
-                _visibleEnemyMap[i, j].Color = cellColor;
+                _visibleEnemyMap[i, j] = drawableCell;
             }
         }
     }
@@ -77,33 +78,34 @@ public class Render
             {
                 Cell currentCell = field[i, j];
                 
-                char cellSymbol = _emptyCell;
-                ConsoleColor cellColor = _emptyCellColor;
+                LabeledCell drawableCell;
+                
+                drawableCell.Value = _emptyCell;
+                drawableCell.Color = _emptyCellColor;
                 
                 if (currentCell.hasShip)
                 {
                     if (currentCell.hasShot)
                     {
-                        cellSymbol = _destroyedShipCell;
-                        cellColor = _destroyedShipColor;
+                        drawableCell.Value = _destroyedShipCell;
+                        drawableCell.Color = _destroyedShipColor;
                     }
                     else
                     {
-                        cellSymbol = _shipCell;
-                        cellColor = _shipColor;
+                        drawableCell.Value = _shipCell;
+                        drawableCell.Color = _shipColor;
                     }
                 }
                 else
                 {
                     if (currentCell.hasShot)
                     {
-                        cellSymbol = _missingShotCell;
-                        cellColor = _missingShotColor;
+                        drawableCell.Value = _missingShotCell;
+                        drawableCell.Color = _missingShotColor;
                     }
                 }
-                
-                _visiblePlayerMap[i, j].Value = cellSymbol;
-                _visiblePlayerMap[i, j].Color = cellColor;
+
+                _visiblePlayerMap[i, j] = drawableCell;
             }
         }
     }
@@ -137,5 +139,4 @@ public class Render
             Console.WriteLine();
         }
     }
-
 }
