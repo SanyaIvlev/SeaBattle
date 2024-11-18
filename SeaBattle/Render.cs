@@ -16,6 +16,7 @@ public class Render
     private ConsoleColor _shipColor = ConsoleColor.Yellow;
     private ConsoleColor _destroyedShipColor = ConsoleColor.Red;
     private ConsoleColor _playerSelectorColor = ConsoleColor.Green;
+    private ConsoleColor _fieldLabel = ConsoleColor.Magenta;
     
     public void DrawMap(ref readonly Player player, ref readonly Cell[,] enemyField)
     {
@@ -110,6 +111,7 @@ public class Render
     
     private void DrawFields()
     {   
+        Console.ForegroundColor = _fieldLabel;
         Console.Write("Enemy's field \t\tYour field\n");
         
         for (int i = 0; i < Field.Height; i++)
