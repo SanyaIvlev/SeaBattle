@@ -1,6 +1,3 @@
-using System.Reflection.Emit;
-using System.Xml.Schema;
-
 namespace SeaBattle;
 
 public class Render

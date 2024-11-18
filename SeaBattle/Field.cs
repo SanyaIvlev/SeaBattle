@@ -1,5 +1,4 @@
 namespace SeaBattle;
-
 public class Field
 {
     public const int Height = 10;
