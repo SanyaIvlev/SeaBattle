@@ -46,22 +46,22 @@ public class Player
     
     private void ProcessShot(char input, ref readonly Field enemyField)
     {
-        if (input == ' ' && !enemyField.Cells[_position.y, _position.x].hasShot)
+        ref Cell shotCell = ref enemyField.GetCell(_position.x, _position.y);
+        
+        if (input == ' ' && !shotCell.hasShot)
         {
-            Shot(enemyField);
+            Shoot(ref shotCell);
         }
     }
 
-    private void Shot(ref readonly Field enemyField)
+    private void Shoot(ref Cell shotCell)
     {
-        Cell shotCell = enemyField.Cells[_position.y, _position.x];
-        
         if (shotCell.hasShip)
         {
             ShipCellsDestroyed++;
         }
         
-        enemyField.Cells[_position.y, _position.x].hasShot = true;
+        shotCell.hasShot = true;
         IsPlayerTurn = false;
 
     }

@@ -7,10 +7,14 @@ public class Field
     public const int ShipsCount = 20;
     private List<string> _ships = new(10) { "####", "###", "###", "##", "##", "##", "#", "#", "#", "#" };
     
-    public Cell[,] Cells = new Cell[Height, Width];
+    private Cell[,] Cells = new Cell[Height, Width];
 
 
     private Random _random = new();
+
+    public ref Cell GetCell(int x, int y) 
+        => ref Cells[y, x];
+    
     
     public void GenerateField()
     {

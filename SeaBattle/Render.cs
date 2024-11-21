@@ -18,25 +18,25 @@ public class Render
     private ConsoleColor _playerSelectorColor = ConsoleColor.Green;
     private ConsoleColor _fieldLabel = ConsoleColor.Magenta;
     
-    public void DrawMap(ref readonly Player player, ref readonly Cell[,] enemyField)
+    public void DrawMap(ref readonly Player player, ref readonly Field enemyField)
     {
         Console.Clear();
         
         (int x, int y) playerPosition = player.Position;
         
-        MakeDrawablePlayerMap(player.BattleField.Cells);
         MakeDrawableEnemyMap(enemyField, playerPosition);
+        MakeDrawablePlayerMap(player.BattleField);
         
         DrawFields();
     }
 
-    private void MakeDrawableEnemyMap(ref readonly Cell[,] field, (int x, int y) playerSelector)
+    private void MakeDrawableEnemyMap(ref readonly Field field, (int x, int y) playerSelector)
     {
         for (int i = 0; i < Field.Height; i++)
         {
             for (int j = 0; j < Field.Width; j++)
             {
-                Cell currentCell = field[i, j];
+                Cell currentCell = field.GetCell(j, i);
 
                 LabeledCell drawableCell;
                 
@@ -68,13 +68,13 @@ public class Render
         }
     }
 
-    private void MakeDrawablePlayerMap(ref readonly Cell[,] field)
+    private void MakeDrawablePlayerMap(ref readonly Field field)
     {
         for (int i = 0; i < Field.Height; i++)
         {
             for (int j = 0; j < Field.Width; j++)
             {
-                Cell currentCell = field[i, j];
+                Cell currentCell = field.GetCell(j, i);
                 
                 LabeledCell drawableCell;
                 

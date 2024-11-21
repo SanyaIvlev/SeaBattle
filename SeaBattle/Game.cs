@@ -11,7 +11,7 @@ public class Game
     {
         InitializeFields();
         
-        _render.DrawMap(ref _player, ref _bot.BattleField.Cells);
+        _render.DrawMap(ref _player, ref _bot.BattleField);
         
         while (!IsGameEnded())
         {
@@ -21,12 +21,12 @@ public class Game
             {
                 _player.ProcessInput(ref _bot.BattleField);
                 _player.Logic();
-                _render.DrawMap(ref _player, ref _bot.BattleField.Cells);
+                _render.DrawMap(ref _player, ref _bot.BattleField);
             }
             
             _bot.Logic(ref _player.BattleField);
             
-            _render.DrawMap(ref _player, ref _bot.BattleField.Cells);
+            _render.DrawMap(ref _player, ref _bot.BattleField);
         }
 
         if (_player.ShipCellsDestroyed == Field.ShipsCount)

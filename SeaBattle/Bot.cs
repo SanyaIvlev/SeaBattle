@@ -12,8 +12,13 @@ public class Bot
 
     public void Logic(ref readonly Field playerField)
     {
-        (int x, int y) shotCell = GetUncheckedCell(playerField);
-        Shot(shotCell, playerField);
+        (int x, int y) shotCellPosition = GetUncheckedCell(playerField);
+        
+        ref Cell shotCell = ref playerField.GetCell(shotCellPosition.x, shotCellPosition.y);
+        
+        Shoot(ref shotCell);
+        
+        _checkedShips.Add(shotCellPosition);
     }
     
     private (int x, int y) GetUncheckedCell(ref readonly Field playerField)
@@ -41,17 +46,13 @@ public class Bot
         return true;
     }
 
-    private void Shot((int x, int y) cell, ref readonly Field playerField)
+    private void Shoot(ref Cell shotCell)
     {
-        Cell shotCell = playerField.Cells[cell.y, cell.x];
-        
         if (shotCell.hasShip)
         {
             ShipCellsDestroyed++;
         }
         
-        playerField.Cells[cell.y, cell.x].hasShot = true;
-        
-        _checkedShips.Add(cell);
+        shotCell.hasShot = true;
     }
 }
