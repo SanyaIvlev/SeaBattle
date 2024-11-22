@@ -2,6 +2,7 @@ namespace SeaBattle;
 public class HumanShotPosition : IShotPosition
 {
     private (int x, int y) _position;
+    private (int x, int y) _delta;
 
     public (int x, int y) GetShotPosition()
         => _position;
@@ -9,45 +10,43 @@ public class HumanShotPosition : IShotPosition
     
     public void FindShotPositionWithin(int width, int height)
     {
-        int x = -1, y = -1;
+        var input = Console.ReadKey();
+        var key = input.KeyChar;
         
-        while (x is -1 || y is -1)
+        while (key != ' ')
         {
-            var input = Console.ReadLine();
+            input = Console.ReadKey();
+            key = input.KeyChar;
             
-            if (input.Length < 2)
-            {
-                continue;
-            }
+            ProcessDirection(key);
             
-            char xLetter = input[0];
-            x = ConvertXToInt(xLetter, width);
+            int newX = _position.x + _delta.x;
+            int newY = _position.y + _delta.y;
             
-            char yLetter = input[1];
-            y = ConvertYToInt(yLetter, height);
+            TryChangePosition(newX, newY, width, height);
         }
-        
-        _position = (x, y);
+    }
+    
+    private void ProcessDirection(char input)
+    {
+        _delta = (0, 0);
+
+        _delta = input switch
+        {
+            'W' or 'w' => (0, -1),
+            'A' or 'a' => (-1, 0),
+            'S' or 's' => (0, 1),
+            'D' or 'd' => (1, 0),
+            _ => (0, 0)
+        };
     }
 
-    private int ConvertXToInt(char x, int width)
+    private void TryChangePosition(int newX, int newY, int width, int height)
     {
-        int endLetter = width + 'A';
-
-        if (x < 'A' || x >= (char)endLetter)
-            return -1;
-
-        return x - 'A';
-
-    }
-
-    private int ConvertYToInt(char y, int height)
-    {
-        int endLetter = height + '0' - 1;
-
-        if (y < '0' || y >= (char)endLetter)
-            return -1;
-
-        return y - '0' - 1;
+        if (newX >= 0 && newY >= 0 && newX < width && newY < height)
+        {
+            _position.x = newX;
+            _position.y = newY;
+        }
     }
 }

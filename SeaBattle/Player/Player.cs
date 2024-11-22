@@ -5,6 +5,7 @@ public class Player
     public int ShipCellsDestroyed = 0;
     
     public Field BattleField = new();
+    
     private IShotPosition _shotPosition;
 
     public Player(bool isHuman)
