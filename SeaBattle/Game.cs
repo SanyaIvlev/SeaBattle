@@ -2,44 +2,37 @@ namespace SeaBattle;
 
 public class Game
 {
-    private Player _player = new();
-    private Bot _bot = new();
+    private Player _player = new(true);
+    private Player _bot = new(false);
+
+    private Player _currentPlayer;
+    private Player _opponent;
     
     private Render _render = new();
 
-    public void Run()
+    public Game()
     {
-        InitializeFields();
-        
-        _render.DrawMap(ref _player, ref _bot.BattleField);
-        
-        while (!IsGameEnded())
-        {
-            _player.IsPlayerTurn = true;
-            
-            while (_player.IsPlayerTurn)
-            {
-                _player.ProcessInput(ref _bot.BattleField);
-                _player.Logic();
-                _render.DrawMap(ref _player, ref _bot.BattleField);
-            }
-            
-            _bot.Logic(ref _player.BattleField);
-            
-            _render.DrawMap(ref _player, ref _bot.BattleField);
-        }
-
-        if (_player.ShipCellsDestroyed == Field.ShipsCount)
-        {
-            Console.WriteLine("Player won the game!");
-        }
-        else if (_bot.ShipCellsDestroyed == Field.ShipsCount)
-        {
-            Console.WriteLine("Bot won the game! You lost :(");
-        }
+        _currentPlayer = _player;
+        _opponent = _bot;
     }
 
-    private void InitializeFields()
+    public void Run()
+    {
+        GenerateMap();
+        DrawMap();
+
+        while (!IsGameEnded())
+        {
+            GetInput(); 
+            Logic();
+            DrawMap();
+            Wait();
+        }
+        
+        Console.WriteLine("Game ended!");
+    }
+
+    private void GenerateMap()
     {
         Field playerField = _player.BattleField;
         playerField.GenerateField();
@@ -47,7 +40,34 @@ public class Game
         Field botField = _bot.BattleField;
         botField.GenerateField();
     }
+
+    private void DrawMap()
+    {
+        _render.DrawMap(_player.BattleField, _bot.BattleField);
+    }
     
     private bool IsGameEnded()
         => _player.ShipCellsDestroyed == Field.ShipsCount || _bot.ShipCellsDestroyed == Field.ShipsCount; 
+    
+    private void GetInput()
+    {
+        _currentPlayer.ProcessInput(ref _opponent.BattleField);
+    }
+    
+    private void Logic()
+    {
+        _currentPlayer.Logic(ref _opponent.BattleField);
+        SwitchPlayer();
+    }
+
+    private void SwitchPlayer()
+    {
+        (_currentPlayer, _opponent) = (_opponent, _currentPlayer);
+    }
+    
+    private void Wait()
+    {
+        Thread.Sleep(500);
+    }
+
 }

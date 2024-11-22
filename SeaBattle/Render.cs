@@ -104,10 +104,23 @@ public class Render
     private void DrawFields()
     {   
         Console.ForegroundColor = _fieldLabel;
-        Console.Write("Enemy's field \t\tYour field\n");
+        Console.Write("Enemy's field \t\tYour field\n\n");
+
+        string horizontalFieldLabel = "";
+
+        for (int i = 0; i < Field.Width; i++)
+        {
+            char currentLetter = (char)('A' + i); 
+            horizontalFieldLabel += currentLetter;
+        }
+        
+        Console.Write("  " + horizontalFieldLabel + "\t\t" + horizontalFieldLabel + "\n");
         
         for (int i = 0; i < Field.Height; i++)
         {
+            Console.ForegroundColor = _fieldLabel;
+            WriteRowNumber(i + 1);
+            
             for (int j = 0; j < Field.Width; j++)
             {
                 LabeledCell currentCell = _visibleEnemyMap[i, j];
@@ -129,5 +142,18 @@ public class Render
             
             Console.WriteLine();
         }
+    }
+
+    private void WriteRowNumber(int i)
+    {
+        if (i < 10)
+        {
+            Console.Write(" " + i);
+        }
+        else
+        {
+            Console.Write(i);
+        }
+        
     }
 }

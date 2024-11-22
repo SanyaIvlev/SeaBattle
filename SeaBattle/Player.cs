@@ -18,21 +18,30 @@ public class Player
             _shotPosition = new BotShotPosition();
         }
     }
-    
-    public void Logic()
+
+    public void ProcessInput(ref Field enemyField)
     {
         _shotPosition.FindShotPositionWithin(Field.Width, Field.Height);
         
         var currentShotPosition = _shotPosition.GetShotPosition();
-        ref Cell currentCell = ref BattleField.GetCell(currentShotPosition.x, currentShotPosition.y); 
+        ref Cell currentCell = ref enemyField.GetCell(currentShotPosition.x, currentShotPosition.y); 
         
         while (currentCell.hasShot)
         {
+            _shotPosition.FindShotPositionWithin(Field.Width, Field.Height);
+            
             currentShotPosition = _shotPosition.GetShotPosition();
-            currentCell = ref BattleField.GetCell(currentShotPosition.x, currentShotPosition.y);
+            currentCell = ref enemyField.GetCell(currentShotPosition.x, currentShotPosition.y);
         }
         
-        Shoot(ref currentCell);
+    }
+    
+    public void Logic(ref Field enemyField)
+    {
+        (int x, int y) shotPosition = _shotPosition.GetShotPosition();
+        ref Cell shotCell = ref enemyField.GetCell(shotPosition.x, shotPosition.y);
+        
+        Shoot(ref shotCell);
     }
 
     private void Shoot(ref Cell shotCell)

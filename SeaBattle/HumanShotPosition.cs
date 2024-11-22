@@ -35,7 +35,7 @@ public class HumanShotPosition : IShotPosition
     {
         int endLetter = width + 'A';
 
-        if (x < 'A' && x > (char)endLetter)
+        if (x < 'A' || x >= (char)endLetter)
             return -1;
 
         return x - 'A';
@@ -46,9 +46,9 @@ public class HumanShotPosition : IShotPosition
     {
         int endLetter = height + '0' - 1;
 
-        if (y < '0' && y > (char)endLetter)
+        if (y < '0' || y >= (char)endLetter)
             return -1;
 
-        return y - '0';
+        return y - '0' - 1;
     }
 }
