@@ -18,19 +18,17 @@ public class Render
     private ConsoleColor _playerSelectorColor = ConsoleColor.Green;
     private ConsoleColor _fieldLabel = ConsoleColor.Magenta;
     
-    public void DrawMap(ref readonly Player player, ref readonly Field enemyField)
+    public void DrawMap(ref readonly Field playerField, ref readonly Field enemyField)
     {
         Console.Clear();
         
-        (int x, int y) playerPosition = player.Position;
-        
-        MakeDrawableEnemyMap(enemyField, playerPosition);
-        MakeDrawablePlayerMap(player.BattleField);
+        MakeDrawableBotMap(enemyField);
+        MakeDrawablePlayerMap(playerField);
         
         DrawFields();
     }
 
-    private void MakeDrawableEnemyMap(ref readonly Field field, (int x, int y) playerSelector)
+    private void MakeDrawableBotMap(ref readonly Field field)
     {
         for (int i = 0; i < Field.Height; i++)
         {
@@ -43,13 +41,7 @@ public class Render
                 drawableCell.Value = _emptyCell;
                 drawableCell.Color = _emptyCellColor;
                 
-                if ((j, i) == playerSelector)
-                {
-                    drawableCell.Value = _playerSelectorCell;
-                    drawableCell.Color = _playerSelectorColor;
-
-                }
-                else if (currentCell.hasShot)
+                if (currentCell.hasShot)
                 {
                     if (currentCell.hasShip)
                     {
