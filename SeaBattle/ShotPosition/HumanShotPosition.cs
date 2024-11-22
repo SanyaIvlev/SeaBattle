@@ -1,5 +1,4 @@
 namespace SeaBattle;
-
 public class HumanShotPosition : IShotPosition
 {
     private (int x, int y) _position;
