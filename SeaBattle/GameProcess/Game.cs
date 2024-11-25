@@ -57,7 +57,10 @@ public class Game
     private void Logic()
     {
         _currentPlayer.Logic(ref _opponent.BattleField);
-        SwitchPlayer();
+        if (_currentPlayer.IsEndedTurn)
+        {
+            SwitchPlayer();
+        }
     }
 
     private void SwitchPlayer()

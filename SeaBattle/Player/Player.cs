@@ -3,7 +3,8 @@ namespace SeaBattle;
 public class Player
 {
     public int ShipCellsDestroyed = 0;
-    
+    public bool IsEndedTurn { get; private set; }
+
     public Field BattleField = new();
     
     private IShotPosition _shotPosition;
@@ -39,10 +40,17 @@ public class Player
     
     public void Logic(ref Field enemyField)
     {
+        IsEndedTurn = false;
+        
         (int x, int y) shotPosition = _shotPosition.GetShotPosition();
         ref Cell shotCell = ref enemyField.GetCell(shotPosition.x, shotPosition.y);
         
         Shoot(ref shotCell);
+
+        if (!shotCell.hasShip)
+        {
+            IsEndedTurn = true;
+        }
     }
 
     private void Shoot(ref Cell shotCell)
