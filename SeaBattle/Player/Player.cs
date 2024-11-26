@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices.JavaScript;
-
 namespace SeaBattle;
 
 public class Player
@@ -18,25 +16,25 @@ public class Player
         get
         {
             if(IsHuman) 
-                return _actionForHuman.GetCurrentPosition();
+                return _humanAction.GetCurrentPosition();
             
-            return _actionForBot.GetPosition();
+            return _botAction.GetPosition();
         }
     } 
-    private HumanAction _actionForHuman;
-    private BotAction _actionForBot;
+    private HumanAction _humanAction;
+    private BotAction _botAction;
 
     public Player(bool isHuman)
     {
         if (isHuman)
         {
-            _actionForHuman = new HumanAction();
-            _actionForBot = null;
+            _humanAction = new HumanAction();
+            _botAction = null;
         }
         else
         {
-            _actionForBot = new BotAction();
-            _actionForHuman = null;
+            _botAction = new BotAction();
+            _humanAction = null;
         }
         
         IsHuman = isHuman;
@@ -45,9 +43,9 @@ public class Player
     public void ProcessInput(ref Field enemyField)
     {
         if(IsHuman) 
-            _actionForHuman.ProcessInput();
+            _humanAction.ProcessInput();
         else 
-            _actionForBot.ProcessAction();
+            _botAction.ProcessAction();
     }
     
     public void Logic(Field enemyField)
@@ -75,14 +73,14 @@ public class Player
 
     private void HandleHumanAction()
     {
-        (int x, int y) newPosition = _actionForHuman.GetNextPosition();
+        (int x, int y) newPosition = _humanAction.GetNextPosition();
         TryToMoveCursor(newPosition);
         
-        while (_actionForHuman.Input != ' ')
+        while (_humanAction.Input != ' ')
         {
-            _actionForHuman.ProcessInput();
+            _humanAction.ProcessInput();
             
-            newPosition = _actionForHuman.GetNextPosition();
+            newPosition = _humanAction.GetNextPosition();
             TryToMoveCursor(newPosition);
         }
     }
@@ -94,7 +92,7 @@ public class Player
         if (x < 0 || x >= Field.Width || y < 0 || y >= Field.Height)
             return;
         
-        _actionForHuman.Position = (x,y);
+        _humanAction.Position = (x,y);
 
         OnCursorPositionChanged?.Invoke();
     }
@@ -105,14 +103,14 @@ public class Player
 
         while (!isActionResultValid)
         {
-            _actionForBot.ProcessAction();
+            _botAction.ProcessAction();
             isActionResultValid = GetResultValidity();
         }
     }
 
     private bool GetResultValidity()
     {
-        (int x,int y) currentPosition = _actionForBot.GetPosition();
+        (int x,int y) currentPosition = _botAction.GetPosition();
         ref Cell currentCell = ref BattleField.GetCell(currentPosition.x, currentPosition.y);
 
         if (currentCell.hasShot)
@@ -130,6 +128,5 @@ public class Player
         }
         
         shotCell.hasShot = true;
-        ;
     }
 }
