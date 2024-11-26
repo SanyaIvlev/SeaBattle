@@ -6,14 +6,15 @@ public class Game
     private Player _bot = new(false);
 
     private Player _currentPlayer;
-    private Player _opponent;
+    private Player _currentOpponent;
     
     private Render _render;
 
     public Game()
     {
         _currentPlayer = _player;
-        _opponent = _bot;
+        _currentOpponent = _bot;
+        
         _render = new(_player, _bot);
     }
 
@@ -52,12 +53,12 @@ public class Game
     
     private void GetInput()
     {
-        _currentPlayer.ProcessInput(ref _opponent.BattleField);
+        _currentPlayer.ProcessInput(ref _currentOpponent.BattleField);
     }
     
     private void Logic()
     {
-        _currentPlayer.Logic(_opponent.BattleField);
+        _currentPlayer.Logic(_currentOpponent.BattleField);
         if (_currentPlayer.IsEndedTurn)
         {
             SwitchPlayer();
@@ -66,7 +67,7 @@ public class Game
 
     private void SwitchPlayer()
     {
-        (_currentPlayer, _opponent) = (_opponent, _currentPlayer);
+        (_currentPlayer, _currentOpponent) = (_currentOpponent, _currentPlayer);
     }
     
     private void Wait()

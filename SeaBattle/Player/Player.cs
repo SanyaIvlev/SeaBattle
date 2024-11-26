@@ -89,7 +89,6 @@ public class Player
     
     private void TryToMoveCursor((int x, int y) currentPosition)
     {
-        ;
         var (x, y) = currentPosition;
 
         if (x < 0 || x >= Field.Width || y < 0 || y >= Field.Height)
@@ -102,16 +101,13 @@ public class Player
     
     private void HandleBotAction()
     {
-        bool isActionResultValid = false;
+        bool isActionResultValid = GetResultValidity();
 
         while (!isActionResultValid)
         {
             _actionForBot.ProcessAction();
             isActionResultValid = GetResultValidity();
         }
-        
-        (int x,int y) currentPosition = _actionForBot.GetPosition();
-        _actionForBot.Position = currentPosition;
     }
 
     private bool GetResultValidity()
@@ -134,5 +130,6 @@ public class Player
         }
         
         shotCell.hasShot = true;
+        ;
     }
 }

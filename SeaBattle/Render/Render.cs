@@ -1,12 +1,11 @@
+using System.Reflection;
+
 namespace SeaBattle;
 
 public class Render
 {
     private Player _player1;
     private Player _player2;
-    
-    private LabeledCell[,] _visiblePlayer1Map = new LabeledCell[Field.Height, Field.Width];
-    private LabeledCell[,] _visiblePlayer2Map = new LabeledCell[Field.Height, Field.Width];
     
     private char _emptyCell = '.';
     private char _missingShotCell = '\u00a4';
@@ -39,97 +38,12 @@ public class Render
     public void DrawMap()
     {
         Console.Clear();
-         
-        MakeDrawableBotMap();
-        MakeDrawablePlayerMap();
-        
+
         DrawFields();
-        
-        
-    }
-    private void MakeDrawableBotMap()
-    {
-        for (int i = 0; i < Field.Height; i++)
-        {
-            for (int j = 0; j < Field.Width; j++)
-            {
-                var field = _player2.BattleField;
-                Cell currentCell = field.GetCell(j, i);
-
-                LabeledCell drawableCell;
-                
-                drawableCell.Value = _emptyCell;
-                drawableCell.Color = _emptyCellColor;
-                
-                if (_player1.ActionPosition == (j, i))
-                {
-                    drawableCell.Value = _playerSelectorCell;
-                    drawableCell.Color = _playerSelectorColor;
-                }
-                else if (currentCell.hasShot)
-                {
-                    if (currentCell.hasShip)
-                    {
-                        drawableCell.Value = _destroyedShipCell;
-                        drawableCell.Color = _destroyedShipColor;
-                    }
-                    else
-                    {
-                        drawableCell.Value = _missingShotCell;
-                        drawableCell.Color = _missingShotColor;
-                    }
-                }
-                
-                _visiblePlayer2Map[i, j] = drawableCell;
-            }
-        }
     }
 
-    private void MakeDrawablePlayerMap()
-    {
-        for (int i = 0; i < Field.Height; i++)
-        {
-            for (int j = 0; j < Field.Width; j++)
-            {
-                var field = _player1.BattleField;
-                Cell currentCell = field.GetCell(j, i);
-                
-                
-                LabeledCell drawableCell;
-                
-                drawableCell.Value = _emptyCell;
-                drawableCell.Color = _emptyCellColor;
-
-                if (currentCell.hasShip)
-                {
-                    if (currentCell.hasShot)
-                    {
-                        drawableCell.Value = _destroyedShipCell;
-                        drawableCell.Color = _destroyedShipColor;
-                    }
-                    else
-                    {
-                        drawableCell.Value = _shipCell;
-                        drawableCell.Color = _shipColor;
-                    }
-                }
-                else
-                {
-                    if (currentCell.hasShot)
-                    {
-                        drawableCell.Value = _missingShotCell;
-                        drawableCell.Color = _missingShotColor;
-                    }
-                }
-
-                _visiblePlayer1Map[i, j] = drawableCell;
-            }
-        }
-    }
-    
-    
     private void DrawFields()
-    {   
+    {
         Console.ForegroundColor = _fieldLabel;
         Console.Write("Enemy's field \t\tYour field\n\n");
 
@@ -150,27 +64,26 @@ public class Render
             
             for (int j = 0; j < Field.Width; j++)
             {
-                LabeledCell currentCell = _visiblePlayer2Map[i, j];
+                Console.ForegroundColor = GetCellColor((j,i), _player1, _player2);
+                var value = GetCellValue((j,i), _player1, _player2);
                 
-                Console.ForegroundColor = currentCell.Color;
-                Console.Write(currentCell.Value);
-                
+                Console.Write(value);
             }
             
             Console.Write("\t\t");
             
             for (int j = 0; j < Field.Width; j++)
             {
-                LabeledCell currentCell = _visiblePlayer1Map[i, j];
+                Console.ForegroundColor = GetCellColor((j,i), _player2, _player1);
+                var value = GetCellValue((j,i), _player2, _player1);
                 
-                Console.ForegroundColor = currentCell.Color;
-                Console.Write(currentCell.Value);
+                Console.Write(value);
             }
             
             Console.WriteLine();
         }
     }
-
+    
     private void WriteRowNumber(int i)
     {
         if (i < 10)
@@ -181,6 +94,75 @@ public class Render
         {
             Console.Write(i);
         }
-        
     }
+
+    private ConsoleColor GetCellColor((int x, int y) cellPosition, Player player, Player opponent)
+    {
+        var areShipsVisible = player.IsHuman;
+        
+        Field currentField = player.BattleField;
+        Cell cell = currentField.GetCell(cellPosition.x, cellPosition.y);
+        
+        if (!player.IsHuman && opponent.ActionPosition == cellPosition)
+        {
+            return _playerSelectorColor;
+        }
+        
+        if (cell.hasShot)
+        {
+            if (cell.hasShip)
+            {
+                return _destroyedShipColor;
+            }
+
+            return _missingShotColor;
+        }
+
+        if (cell.hasShip && areShipsVisible)
+        {
+            return _shipColor;
+        }
+
+        if (cell.hasShip && !areShipsVisible)
+        {
+            return _emptyCellColor;
+        }
+
+        return _emptyCellColor;
+    }
+
+    private char GetCellValue((int x, int y) cellPosition, Player player, Player opponent)
+    {
+        var areShipsVisible = player.IsHuman;
+        
+        Field currentField = player.BattleField;
+        Cell cell = currentField.GetCell(cellPosition.x, cellPosition.y);
+        
+        if (!player.IsHuman && opponent.ActionPosition == cellPosition)
+        {
+            return _playerSelectorCell;
+        }
+        if (cell.hasShot)
+        {
+            if (cell.hasShip)
+            {
+                return _destroyedShipCell;
+            }
+
+            return _missingShotCell;
+        }
+
+        if (cell.hasShip && areShipsVisible)
+        {
+            return _shipCell;
+        }
+
+        if (cell.hasShip && !areShipsVisible)
+        {
+            return _emptyCell;
+        }
+
+        return _emptyCell;
+    }
+
 }
