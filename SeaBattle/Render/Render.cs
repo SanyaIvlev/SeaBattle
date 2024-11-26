@@ -2,8 +2,11 @@ namespace SeaBattle;
 
 public class Render
 {
-    private LabeledCell[,] _visiblePlayerMap = new LabeledCell[Field.Height, Field.Width];
-    private LabeledCell[,] _visibleEnemyMap = new LabeledCell[Field.Height, Field.Width];
+    private Player _player1;
+    private Player _player2;
+    
+    private LabeledCell[,] _visiblePlayer1Map = new LabeledCell[Field.Height, Field.Width];
+    private LabeledCell[,] _visiblePlayer2Map = new LabeledCell[Field.Height, Field.Width];
     
     private char _emptyCell = '.';
     private char _missingShotCell = '\u00a4';
@@ -17,23 +20,40 @@ public class Render
     private ConsoleColor _destroyedShipColor = ConsoleColor.Red;
     private ConsoleColor _playerSelectorColor = ConsoleColor.Green;
     private ConsoleColor _fieldLabel = ConsoleColor.Magenta;
+
+    public Render(Player player1, Player player2)
+    {
+        _player1 = player1;
+        _player2 = player2;
+        
+        if (_player1.IsHuman)
+        {
+            _player1.OnCursorPositionChanged += DrawMap;
+        }
+        else if(_player2.IsHuman)
+        {
+            _player2.OnCursorPositionChanged += DrawMap;
+        }
+    }
     
-    public void DrawMap(ref readonly Field playerField, ref readonly Field enemyField)
+    public void DrawMap()
     {
         Console.Clear();
-        
-        MakeDrawableBotMap(enemyField);
-        MakeDrawablePlayerMap(playerField);
+         
+        MakeDrawableBotMap();
+        MakeDrawablePlayerMap();
         
         DrawFields();
+        
+        
     }
-
-    private void MakeDrawableBotMap(ref readonly Field field)
+    private void MakeDrawableBotMap()
     {
         for (int i = 0; i < Field.Height; i++)
         {
             for (int j = 0; j < Field.Width; j++)
             {
+                var field = _player2.BattleField;
                 Cell currentCell = field.GetCell(j, i);
 
                 LabeledCell drawableCell;
@@ -41,7 +61,12 @@ public class Render
                 drawableCell.Value = _emptyCell;
                 drawableCell.Color = _emptyCellColor;
                 
-                if (currentCell.hasShot)
+                if (_player1.ActionPosition == (j, i))
+                {
+                    drawableCell.Value = _playerSelectorCell;
+                    drawableCell.Color = _playerSelectorColor;
+                }
+                else if (currentCell.hasShot)
                 {
                     if (currentCell.hasShip)
                     {
@@ -55,24 +80,26 @@ public class Render
                     }
                 }
                 
-                _visibleEnemyMap[i, j] = drawableCell;
+                _visiblePlayer2Map[i, j] = drawableCell;
             }
         }
     }
 
-    private void MakeDrawablePlayerMap(ref readonly Field field)
+    private void MakeDrawablePlayerMap()
     {
         for (int i = 0; i < Field.Height; i++)
         {
             for (int j = 0; j < Field.Width; j++)
             {
+                var field = _player1.BattleField;
                 Cell currentCell = field.GetCell(j, i);
+                
                 
                 LabeledCell drawableCell;
                 
                 drawableCell.Value = _emptyCell;
                 drawableCell.Color = _emptyCellColor;
-                
+
                 if (currentCell.hasShip)
                 {
                     if (currentCell.hasShot)
@@ -95,7 +122,7 @@ public class Render
                     }
                 }
 
-                _visiblePlayerMap[i, j] = drawableCell;
+                _visiblePlayer1Map[i, j] = drawableCell;
             }
         }
     }
@@ -123,7 +150,7 @@ public class Render
             
             for (int j = 0; j < Field.Width; j++)
             {
-                LabeledCell currentCell = _visibleEnemyMap[i, j];
+                LabeledCell currentCell = _visiblePlayer2Map[i, j];
                 
                 Console.ForegroundColor = currentCell.Color;
                 Console.Write(currentCell.Value);
@@ -134,7 +161,7 @@ public class Render
             
             for (int j = 0; j < Field.Width; j++)
             {
-                LabeledCell currentCell = _visiblePlayerMap[i, j];
+                LabeledCell currentCell = _visiblePlayer1Map[i, j];
                 
                 Console.ForegroundColor = currentCell.Color;
                 Console.Write(currentCell.Value);

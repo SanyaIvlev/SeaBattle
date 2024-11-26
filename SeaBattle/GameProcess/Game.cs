@@ -8,12 +8,13 @@ public class Game
     private Player _currentPlayer;
     private Player _opponent;
     
-    private Render _render = new();
+    private Render _render;
 
     public Game()
     {
         _currentPlayer = _player;
         _opponent = _bot;
+        _render = new(_player, _bot);
     }
 
     public void Run()
@@ -43,7 +44,7 @@ public class Game
 
     private void DrawMap()
     {
-        _render.DrawMap(_player.BattleField, _bot.BattleField);
+        _render.DrawMap();
     }
     
     private bool IsGameEnded()
@@ -56,7 +57,7 @@ public class Game
     
     private void Logic()
     {
-        _currentPlayer.Logic(ref _opponent.BattleField);
+        _currentPlayer.Logic(_opponent.BattleField);
         if (_currentPlayer.IsEndedTurn)
         {
             SwitchPlayer();
