@@ -1,1 +1,1 @@
-﻿new SeaBattle.Game().Run();
+﻿new SeaBattle.Game().Start();

@@ -2,17 +2,14 @@ namespace SeaBattle;
 
 public class Game
 {
-    private Player _player1 = new(false);
-    private Player _player2 = new(true);
+    private Player _player1 = new(true);
+    private Player _player2 = new(false);
 
     private Player _currentPlayer;
     private Player _currentOpponent;
 
     public Game()
     {
-        _currentPlayer = _player1;
-        _currentOpponent = _player2;
-        
         if (_player1.IsHuman)
         {
             _player1.OnCursorPositionChanged += DrawMap;
@@ -23,20 +20,34 @@ public class Game
         }
     }
 
-    public void Run()
+    public void Start()
     {
-        GenerateMap();
-        DrawMap();
+        RunGameCycle();
+    }
+    
+    private void RunGameCycle()
+    {
+        Init();
 
         while (!IsGameEnded())
         {
-            GetInput(); 
+            ProcessInput(); 
             Logic();
             DrawMap();
             Wait();
         }
 
         DrawResults();
+    }
+
+    private void Init()
+    {
+        _currentPlayer = _player1;
+        _currentOpponent = _player2;
+        
+        GenerateMap();
+        
+        DrawMap();
     }
 
     private void GenerateMap()
@@ -168,7 +179,7 @@ public class Game
     private bool IsGameEnded()
         => _player1.ShipCellsDestroyed == Field.ShipsCount || _player2.ShipCellsDestroyed == Field.ShipsCount; 
     
-    private void GetInput()
+    private void ProcessInput()
     {
         _currentPlayer.ProcessInput(_currentOpponent.BattleField);
     }

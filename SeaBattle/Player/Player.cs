@@ -58,7 +58,13 @@ public class Player
         }
         else
         {
-            HandleBotAction(enemyField);
+            var botPosition = _botAction.GetPosition();
+            Cell botShootingCell = enemyField.GetCell(botPosition.x, botPosition.y);
+
+            if (botShootingCell.hasShot)
+            {
+                return;
+            }
         }
         
         ref Cell shotCell = ref enemyField.GetCell(ActionPosition.x, ActionPosition.y);
@@ -105,24 +111,6 @@ public class Player
         _humanAction.Position = (x,y);
 
         OnCursorPositionChanged?.Invoke();
-    }
-    
-    private void HandleBotAction(Field enemyField)
-    {
-        (int x,int y) currentPosition = _botAction.GetPosition();
-        ref Cell enemyCell = ref enemyField.GetCell(currentPosition.x, currentPosition.y);
-
-        bool canShoot = !enemyCell.hasShot;
-
-        while (!canShoot)
-        {
-            _botAction.ProcessAction();
-            
-            currentPosition = _botAction.GetPosition();
-            enemyCell = ref enemyField.GetCell(currentPosition.x, currentPosition.y);
-
-            canShoot = !enemyCell.hasShot;
-        }
     }
     
     private void Shoot(ref Cell shotCell)
