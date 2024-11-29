@@ -3,7 +3,7 @@ namespace SeaBattle;
 public class Game
 {
     private Player _player1 = new(true);
-    private Player _player2 = new(false);
+    private Player _player2 = new(true);
 
     private Player _currentPlayer;
     private Player _currentOpponent;
@@ -135,32 +135,37 @@ public class Game
     private (char value, ConsoleColor color) GetCellCharacteristics((int x, int y) cellPosition, Field currentField, Player opponent, bool areShipsVisible)
     {
         Cell cell = currentField.GetCell(cellPosition.x, cellPosition.y);
-        
-        if (opponent.ActionPosition == cellPosition)
-        {
-            return ('*', ConsoleColor.Green);
-        }
 
+        (char value, ConsoleColor color) characteristic = ('.', ConsoleColor.White);
+        
         if (cell.hasShot)
         {
             if (cell.hasShip)
             {
-                return ('X', ConsoleColor.Red);
+                characteristic = ('X', ConsoleColor.Red);
             }
+            else
+            {
+                characteristic = ('\u00a4', ConsoleColor.Blue);
+            }
+            
+            if (opponent.ActionPosition == cellPosition)
+            {
+                characteristic.color = ConsoleColor.Green;
+            }
+        }
+        else if (opponent.ActionPosition == cellPosition)
+        {
+            characteristic = ('*', ConsoleColor.Green);
+        }
 
-            return ('\u00a4', ConsoleColor.Blue);
-        }
-        
-        if (cell.hasShip && areShipsVisible)
+
+        else if (cell.hasShip && areShipsVisible)
         {
-            return ('#', ConsoleColor.Yellow);
+            characteristic = ('#', ConsoleColor.Yellow);
         }
-        
-        if (cell.hasShip && !areShipsVisible)
-        {
-            return ('.', ConsoleColor.White);
-        }
-        return ('.', ConsoleColor.White);
+
+        return characteristic;
     }
     
     private bool IsGameEnded()
