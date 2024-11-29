@@ -81,8 +81,6 @@ public class Player
             {
                 return;
             }
-            
-            
         }
         
         Thread.Sleep(500);

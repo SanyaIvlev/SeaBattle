@@ -55,7 +55,7 @@ public class Game
     private void DrawFields()
     {
         Console.ForegroundColor = ConsoleColor.Magenta;
-        Console.Write("  Player1's field \t\tPlayer2's field\n\n");
+        //Console.Write("  Player1's field \t\tPlayer2's field\n\n");
 
         string horizontalFieldLabel = "";
 
