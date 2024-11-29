@@ -22,24 +22,45 @@ public class Field
         {
             bool isHorizontal = GetRandomState();
             bool isPlaced = false;
+
+            int i = 0;
             
             while (!isPlaced)
             {
-                (int x, int y) randomCell = GetRandomCell();
+                if (i > 50)
+                {
+                    break;
+                }
+                
+                
 
-                if (isHorizontal && CanPlaceHorizontal(ship.Length, randomCell))
-                {
-                    PlaceHorizontal(ship.Length, randomCell);
-                    isPlaced = true;
-                }
-                else if(!isHorizontal && CanPlaceVerticalShip(ship.Length, randomCell))
-                {
-                    PlaceVertical(ship.Length, randomCell);
-                    isPlaced = true;
-                }
+                TryPlaceShip(isHorizontal, ship, out isPlaced);
+
+                i++;
             }
         }
     }
+
+    private void TryPlaceShip(bool isHorizontal, string ship, out bool isPlaced)
+    {
+        (int x, int y) randomCell = GetRandomCell();
+        
+        if (isHorizontal && CanPlaceHorizontal(ship.Length, randomCell))
+        {
+            PlaceHorizontal(ship.Length, randomCell);
+            isPlaced = true;
+            return;
+        }
+        if(!isHorizontal && CanPlaceVerticalShip(ship.Length, randomCell))
+        {
+            PlaceVertical(ship.Length, randomCell);
+            isPlaced = true;
+            return;
+        }
+
+        isPlaced = false;
+    }
+
     public int GetShipsNumber()
         => ShipsCount;
     
