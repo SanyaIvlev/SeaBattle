@@ -8,18 +8,6 @@ public class Game
     private Player _currentPlayer;
     private Player _currentOpponent;
 
-    public Game()
-    {
-        if (_player1.IsHuman)
-        {
-            _player1.OnCursorPositionChanged += DrawMap;
-        }
-        if(_player2.IsHuman)
-        {
-            _player2.OnCursorPositionChanged += DrawMap;
-        }
-    }
-
     public void Start()
     {
         RunGameCycle();
@@ -34,7 +22,6 @@ public class Game
             ProcessInput(); 
             Logic();
             DrawMap();
-            Wait();
         }
 
         DrawResults();
@@ -181,12 +168,13 @@ public class Game
     
     private void ProcessInput()
     {
-        _currentPlayer.ProcessInput(_currentOpponent.BattleField);
+        _currentPlayer.ProcessInput();
     }
     
     private void Logic()
     {
         _currentPlayer.Logic(_currentOpponent.BattleField);
+        
         if (_currentPlayer.IsEndedTurn)
         {
             SwitchPlayer();
@@ -196,11 +184,6 @@ public class Game
     private void SwitchPlayer()
     {
         (_currentPlayer, _currentOpponent) = (_currentOpponent, _currentPlayer);
-    }
-    
-    private void Wait()
-    {
-        Thread.Sleep(500);
     }
     
     private void DrawResults()

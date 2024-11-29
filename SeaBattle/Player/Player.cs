@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace SeaBattle;
 
 public class Player
@@ -7,8 +9,6 @@ public class Player
     public bool IsEndedTurn { get; private set; }
 
     public Field BattleField = new();
-    
-    public event Action OnCursorPositionChanged; 
 
     public bool IsHuman;
     public (int x, int y) ActionPosition
@@ -40,7 +40,7 @@ public class Player
         IsHuman = isHuman;
     }
 
-    public void ProcessInput(Field enemyField)
+    public void ProcessInput()
     {
         if(IsHuman) 
             _humanAction.ProcessInput();
@@ -54,7 +54,23 @@ public class Player
 
         if (IsHuman)
         {
-            HandleHumanAction(enemyField);
+            if (_humanAction.Input == ' ')
+            {
+                (int x, int y) currentPosition = _humanAction.GetCurrentPosition();
+                Cell enemyCell = enemyField.GetCell(currentPosition.x, currentPosition.y);
+
+                if (enemyCell.hasShot)
+                {
+                    return;
+                }
+            }
+            else
+            {
+                (int x, int y) = _humanAction.GetNextPosition();
+                
+                TryToMoveCursor(x, y);
+                return;
+            }
         }
         else
         {
@@ -65,7 +81,11 @@ public class Player
             {
                 return;
             }
+            
+            
         }
+        
+        Thread.Sleep(500);
         
         ref Cell shotCell = ref enemyField.GetCell(ActionPosition.x, ActionPosition.y);
         
@@ -77,42 +97,14 @@ public class Player
         }
     }
 
-    private void HandleHumanAction(Field enemyField)
+    private void TryToMoveCursor(int x, int y)
     {
-        (int x, int y) newPosition = _humanAction.GetNextPosition();
-        TryToMoveCursor(newPosition);
-
-        (int x, int y) currentPosition = _humanAction.GetCurrentPosition();
-        ref Cell enemyCell = ref enemyField.GetCell(currentPosition.x, currentPosition.y);
-
-        bool canShoot = !enemyCell.hasShot;
-        
-        while (_humanAction.Input != ' ' || !canShoot)
-        {
-            _humanAction.ProcessInput();
-            
-            newPosition = _humanAction.GetNextPosition();
-            TryToMoveCursor(newPosition);
-            
-            currentPosition = _humanAction.GetCurrentPosition();
-            enemyCell = ref enemyField.GetCell(currentPosition.x, currentPosition.y);
-            
-            canShoot = !enemyCell.hasShot;
-        }
-    }
-    
-    private void TryToMoveCursor((int x, int y) currentPosition)
-    {
-        var (x, y) = currentPosition;
-
         if (x < 0 || x >= Field.Width || y < 0 || y >= Field.Height)
             return;
         
         _humanAction.Position = (x,y);
-
-        OnCursorPositionChanged?.Invoke();
     }
-    
+
     private void Shoot(ref Cell shotCell)
     {
         if (shotCell.hasShip)

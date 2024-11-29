@@ -36,18 +36,4 @@ public class HumanAction
         Input = key;
 
     }
-    
-    private void ProcessDirection(char input)
-    {
-        _delta = (0, 0);
-
-        _delta = input switch
-        {
-            'W' or 'w' => (0, -1),
-            'A' or 'a' => (-1, 0),
-            'S' or 's' => (0, 1),
-            'D' or 'd' => (1, 0),
-            _ => (0, 0)
-        };
-    }
 }
