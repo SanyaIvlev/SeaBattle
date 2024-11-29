@@ -40,7 +40,7 @@ public class Player
         IsHuman = isHuman;
     }
 
-    public void ProcessInput(ref Field enemyField)
+    public void ProcessInput(Field enemyField)
     {
         if(IsHuman) 
             _humanAction.ProcessInput();
@@ -54,11 +54,11 @@ public class Player
 
         if (IsHuman)
         {
-            HandleHumanAction();
+            HandleHumanAction(enemyField);
         }
         else
         {
-            HandleBotAction();
+            HandleBotAction(enemyField);
         }
         
         ref Cell shotCell = ref enemyField.GetCell(ActionPosition.x, ActionPosition.y);
@@ -71,17 +71,27 @@ public class Player
         }
     }
 
-    private void HandleHumanAction()
+    private void HandleHumanAction(Field enemyField)
     {
         (int x, int y) newPosition = _humanAction.GetNextPosition();
         TryToMoveCursor(newPosition);
+
+        (int x, int y) currentPosition = _humanAction.GetCurrentPosition();
+        ref Cell enemyCell = ref enemyField.GetCell(currentPosition.x, currentPosition.y);
+
+        bool canShoot = !enemyCell.hasShot;
         
-        while (_humanAction.Input != ' ')
+        while (_humanAction.Input != ' ' || !canShoot)
         {
             _humanAction.ProcessInput();
             
             newPosition = _humanAction.GetNextPosition();
             TryToMoveCursor(newPosition);
+            
+            currentPosition = _humanAction.GetCurrentPosition();
+            enemyCell = ref enemyField.GetCell(currentPosition.x, currentPosition.y);
+            
+            canShoot = !enemyCell.hasShot;
         }
     }
     
@@ -97,29 +107,24 @@ public class Player
         OnCursorPositionChanged?.Invoke();
     }
     
-    private void HandleBotAction()
-    {
-        bool isActionResultValid = GetResultValidity();
-
-        while (!isActionResultValid)
-        {
-            _botAction.ProcessAction();
-            isActionResultValid = GetResultValidity();
-        }
-    }
-
-    private bool GetResultValidity()
+    private void HandleBotAction(Field enemyField)
     {
         (int x,int y) currentPosition = _botAction.GetPosition();
-        ref Cell currentCell = ref BattleField.GetCell(currentPosition.x, currentPosition.y);
+        ref Cell enemyCell = ref enemyField.GetCell(currentPosition.x, currentPosition.y);
 
-        if (currentCell.hasShot)
-            return false;
+        bool canShoot = !enemyCell.hasShot;
 
-        return true;
+        while (!canShoot)
+        {
+            _botAction.ProcessAction();
+            
+            currentPosition = _botAction.GetPosition();
+            enemyCell = ref enemyField.GetCell(currentPosition.x, currentPosition.y);
+
+            canShoot = !enemyCell.hasShot;
+        }
     }
-
-
+    
     private void Shoot(ref Cell shotCell)
     {
         if (shotCell.hasShip)

@@ -2,8 +2,8 @@ namespace SeaBattle;
 
 public class Game
 {
-    private Player _player1 = new(true);
-    private Player _player2 = new(false);
+    private Player _player1 = new(false);
+    private Player _player2 = new(true);
 
     private Player _currentPlayer;
     private Player _currentOpponent;
@@ -57,17 +57,19 @@ public class Game
     private void DrawFields()
     {
         Console.ForegroundColor = ConsoleColor.Magenta;
-        Console.Write("Player1's field \tPlayer2's field\n\n");
+        Console.Write("  Player1's field \t\tPlayer2's field\n\n");
 
         string horizontalFieldLabel = "";
 
         for (int i = 0; i < Field.Width; i++)
         {
             char currentLetter = (char)('A' + i); 
-            horizontalFieldLabel += currentLetter;
+            horizontalFieldLabel += currentLetter + " ";
         }
         
         Console.Write("  " + horizontalFieldLabel + "\t\t" + horizontalFieldLabel + "\n");
+        
+        (bool player1FieldVisibility, bool player2FieldVisibility) = GetFieldsVisibility(_player1, _player2); 
         
         for (int i = 0; i < Field.Height; i++)
         {
@@ -76,26 +78,26 @@ public class Game
             
             for (int j = 0; j < Field.Width; j++)
             {
-                Console.ForegroundColor = GetCellColor((j,i), _player1, _player2);
-                var value = GetCellValue((j,i), _player1, _player2);
+                Console.ForegroundColor = GetCellColor((j,i), _player1, _player2, player1FieldVisibility);
+                var value = GetCellValue((j,i), _player1, _player2, player1FieldVisibility);
                 
-                Console.Write(value);
+                Console.Write(value + " ");
             }
             
             Console.Write("\t\t");
             
             for (int j = 0; j < Field.Width; j++)
             {
-                Console.ForegroundColor = GetCellColor((j,i), _player2, _player1);
-                var value = GetCellValue((j,i), _player2, _player1);
+                Console.ForegroundColor = GetCellColor((j,i), _player2, _player1, player2FieldVisibility);
+                var value = GetCellValue((j,i), _player2, _player1, player2FieldVisibility);
                 
-                Console.Write(value);
+                Console.Write(value +  " ");
             }
             
             Console.WriteLine();
         }
     }
-    
+
     private void WriteRowNumber(int i)
     {
         if (i < 10)
@@ -108,10 +110,30 @@ public class Game
         }
     }
     
-    private ConsoleColor GetCellColor((int x, int y) cellPosition, Player player, Player opponent)
+    
+    private (bool player1FieldVisibility, bool player2FieldVisibility) GetFieldsVisibility(Player player1, Player player2)
     {
-        var areShipsVisible = player.IsHuman;
+        if (player1.IsHuman && player2.IsHuman)
+        {
+            return (false, false);
+        }
         
+        if (!player1.IsHuman && !player2.IsHuman)
+        {
+            return (true, true);
+        }
+
+        if (player1.IsHuman && !player2.IsHuman)
+        {
+            return (true, false);
+        }
+
+        return (false, true);
+    }
+
+    
+    private ConsoleColor GetCellColor((int x, int y) cellPosition, Player player, Player opponent, bool areShipsColored)
+    {
         Field currentField = player.BattleField;
         Cell cell = currentField.GetCell(cellPosition.x, cellPosition.y);
         
@@ -130,12 +152,12 @@ public class Game
             return ConsoleColor.Green;
         }
 
-        if (cell.hasShip && areShipsVisible)
+        if (cell.hasShip && areShipsColored)
         {
             return ConsoleColor.Yellow;
         }
 
-        if (cell.hasShip && !areShipsVisible)
+        if (cell.hasShip && !areShipsColored)
         {
             return ConsoleColor.White;
         }
@@ -143,13 +165,10 @@ public class Game
         return ConsoleColor.White;
     }
     
-    private char GetCellValue((int x, int y) cellPosition, Player player, Player opponent)
+    private char GetCellValue((int x, int y) cellPosition, Player player, Player opponent, bool areShipsVisible)
     {
-        var areShipsVisible = player.IsHuman;
-        
         Field currentField = player.BattleField;
         Cell cell = currentField.GetCell(cellPosition.x, cellPosition.y);
-        
         
         if (cell.hasShot)
         {
@@ -181,7 +200,7 @@ public class Game
     
     private void GetInput()
     {
-        _currentPlayer.ProcessInput(ref _currentOpponent.BattleField);
+        _currentPlayer.ProcessInput(_currentOpponent.BattleField);
     }
     
     private void Logic()
@@ -200,7 +219,7 @@ public class Game
     
     private void Wait()
     {
-        //Thread.Sleep(500);
+        Thread.Sleep(500);
     }
     
     private void DrawResults()
