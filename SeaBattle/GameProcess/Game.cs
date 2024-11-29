@@ -80,10 +80,10 @@ public class Game
             
             for (int j = 0; j < Field.Width; j++)
             {
-                Console.ForegroundColor = GetCellColor((j,i), currentField, _player2, player1FieldVisibility);
-                var value = GetCellValue((j,i), currentField, _player2, player1FieldVisibility);
-                
-                Console.Write(value + " ");
+                var cellCharacteristics = GetCellCharacteristics((j,i), currentField, _player2, player1FieldVisibility);
+
+                Console.ForegroundColor = cellCharacteristics.color;
+                Console.Write(cellCharacteristics.value + " ");
             }
             
             Console.Write("\t\t");
@@ -92,10 +92,10 @@ public class Game
             
             for (int j = 0; j < Field.Width; j++)
             {
-                Console.ForegroundColor = GetCellColor((j,i), currentField, _player1, player2FieldVisibility);
-                var value = GetCellValue((j,i), currentField, _player1, player2FieldVisibility);
+                var cellCharacteristics = GetCellCharacteristics((j,i), currentField, _player1, player2FieldVisibility);
                 
-                Console.Write(value +  " ");
+                Console.ForegroundColor = cellCharacteristics.color;
+                Console.Write(cellCharacteristics.value + " ");
             }
             
             Console.WriteLine();
@@ -134,69 +134,35 @@ public class Game
 
         return (false, true);
     }
-
-    
-    private ConsoleColor GetCellColor((int x, int y) cellPosition, Field currentField, Player opponent, bool areShipsColored)
+    private (char value, ConsoleColor color) GetCellCharacteristics((int x, int y) cellPosition, Field currentField, Player opponent, bool areShipsVisible)
     {
         Cell cell = currentField.GetCell(cellPosition.x, cellPosition.y);
         
         if (opponent.ActionPosition == cellPosition)
         {
-            return ConsoleColor.Green;
+            return ('*', ConsoleColor.Green);
         }
 
         if (cell.hasShot)
         {
             if (cell.hasShip)
             {
-                return ConsoleColor.Red;
+                return ('X', ConsoleColor.Red);
             }
 
-            return  ConsoleColor.Blue;
-        }
-        
-        if (cell.hasShip && areShipsColored)
-        {
-            return ConsoleColor.Yellow;
-        }
-
-        if (cell.hasShip && !areShipsColored)
-        {
-            return ConsoleColor.White;
-        }
-
-        return ConsoleColor.White;
-    }
-    
-    private char GetCellValue((int x, int y) cellPosition, Field currentField, Player opponent, bool areShipsVisible)
-    {
-        Cell cell = currentField.GetCell(cellPosition.x, cellPosition.y);
-        
-        if (opponent.ActionPosition == cellPosition)
-        {
-            return '*';
-        }
-
-        if (cell.hasShot)
-        {
-            if (cell.hasShip)
-            {
-                return 'X';
-            }
-
-            return '\u00a4';
+            return ('\u00a4', ConsoleColor.Blue);
         }
         
         if (cell.hasShip && areShipsVisible)
         {
-            return '#';
+            return ('#', ConsoleColor.Yellow);
         }
         
         if (cell.hasShip && !areShipsVisible)
         {
-            return '.';
+            return ('.', ConsoleColor.White);
         }
-         return '.';
+        return ('.', ConsoleColor.White);
     }
     
     private bool IsGameEnded()
