@@ -2,8 +2,8 @@ namespace SeaBattle;
 
 public class Game
 {
-    private Player _player1 = new(true);
-    private Player _player2 = new(true);
+    private Player _player1 = new(true); // !! поки перемикати PvP, PvE, EvE можна змінюючи цей аргумент (true - людина, false - бот) 
+    private Player _player2 = new(false); // !! поки перемикати PvP, PvE, EvE можна змінюючи цей аргумент (true - людина, false - бот) 
 
     private Player _currentPlayer;
     private Player _currentOpponent;
