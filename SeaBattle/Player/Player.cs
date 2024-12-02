@@ -2,6 +2,10 @@ namespace SeaBattle;
 
 public class Player
 {
+    public string Name;
+    
+    public int RoundsWon = 0;
+    
     public int ShipCellsDestroyed = 0;
     
     public bool IsEndedTurn { get; private set; }
@@ -13,7 +17,7 @@ public class Player
 
     private IAction _action;
 
-    public Player(bool isHuman)
+    public Player(bool isHuman, string name)
     {
         if (isHuman)
         {
@@ -25,6 +29,7 @@ public class Player
         }
         
         IsHuman = isHuman;
+        Name = name;
     }
 
     public void ProcessInput()

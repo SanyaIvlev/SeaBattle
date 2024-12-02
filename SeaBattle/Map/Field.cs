@@ -6,8 +6,8 @@ public class Field
 
     public const int ShipsCount = 20;
     private List<string> _ships = new(10) { "####", "###", "###", "##", "##", "##", "#", "#", "#", "#" };
-    
-    private Cell[,] Cells = new Cell[Height, Width];
+
+    private Cell[,] Cells;
 
 
     private Random _random = new();
@@ -18,6 +18,8 @@ public class Field
     
     public void GenerateField()
     {
+        Cells = new Cell[Height, Width];
+        
         foreach (string ship in _ships)
         {
             bool isHorizontal = GetRandomState();
@@ -31,8 +33,6 @@ public class Field
                 {
                     break;
                 }
-                
-                
 
                 TryPlaceShip(isHorizontal, ship, out isPlaced);
 

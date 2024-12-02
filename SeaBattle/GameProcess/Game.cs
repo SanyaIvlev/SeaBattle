@@ -19,25 +19,29 @@ public class Game
 
     public void Start(Gamemode gamemode)
     {
-        SetGameMode(gamemode);
+        _gamemode = gamemode;
+        SetGameMode();
+        
         Init();
+        
         RunGameCycle();
     }
 
-    private void SetGameMode(Gamemode gamemode)
+    private void SetGameMode()
     {
-        _gamemode = gamemode;
-        
-        (_player1, _player2) = gamemode switch
+        (_player1, _player2) = _gamemode switch
         {
-            Gamemode.PvP => (new Player(true), new Player(true)),
-            Gamemode.PvE => (new Player(true), new Player(false)),
-            Gamemode.EvE => (new Player(false), new Player(false)),
+            Gamemode.PvP => (new Player(true, "Player1"), new Player(true, "Player2")),
+            Gamemode.PvE => (new Player(true, "Player1"), new Player(false, "Player2")),
+            Gamemode.EvE => (new Player(false, "Player1"), new Player(false, "Player2")),
         };
     }
     
     public void Init()
     {
+        _player1.ShipCellsDestroyed = 0;
+        _player2.ShipCellsDestroyed = 0;
+        
         _currentPlayer = _player1;
         _currentOpponent = _player2;
         
@@ -76,7 +80,8 @@ public class Game
     private void DrawFields()
     {
         Console.ForegroundColor = ConsoleColor.Magenta;
-
+        Console.Write(_player1.Name + "\t\t\t\t" + _player2.Name + "\n");
+        
         string horizontalFieldLabel = "";
 
         for (int i = 0; i < Field.Width; i++)
@@ -178,7 +183,7 @@ public class Game
     }
     
     private bool IsGameEnded()
-        => _player1.ShipCellsDestroyed == Field.ShipsCount || _player2.ShipCellsDestroyed == Field.ShipsCount; 
+        => _player1.RoundsWon == 3 || _player2.RoundsWon == 3; 
     
     private void ProcessInput()
     {
@@ -189,10 +194,27 @@ public class Game
     {
         _currentPlayer.Logic(_currentOpponent.BattleField);
         
-        if (_currentPlayer.IsEndedTurn)
+        if (_currentPlayer.ShipCellsDestroyed == Field.ShipsCount)
+        {
+            EndThisRound();
+        }
+        else if (_currentPlayer.IsEndedTurn)
         {
             SwitchPlayer();
         }
+    }
+
+    private void EndThisRound()
+    {
+        _currentPlayer.RoundsWon++;
+        
+        Console.ForegroundColor = ConsoleColor.Magenta;
+        Console.WriteLine("\n" + _currentPlayer.Name + " wins this round!!!");
+        
+        Thread.Sleep(2000);
+        
+        if(!IsGameEnded())
+            Init();
     }
 
     private void SwitchPlayer()
@@ -204,14 +226,7 @@ public class Game
     {
         Console.ForegroundColor = ConsoleColor.Magenta;
         
-        if (_player1.ShipCellsDestroyed == Field.ShipsCount)
-        {
-            Console.WriteLine("Player 1 has won the game!");
-        }
-        else if (_player2.ShipCellsDestroyed == Field.ShipsCount)
-        {
-            Console.WriteLine("Player 2 has won the game!");
-        }
+        Console.Write("\n" + _currentPlayer.Name + " has won the game!");
     }
 
 
