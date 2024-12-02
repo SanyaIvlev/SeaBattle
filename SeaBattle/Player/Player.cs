@@ -51,8 +51,6 @@ public class Player
         
         if(!IsHuman)
             Position = actionPosition;
-                
-        Thread.Sleep(500);
         
         ref Cell shotCell = ref enemyField.GetCell(Position.x, Position.y);
         

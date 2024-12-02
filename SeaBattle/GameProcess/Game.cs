@@ -57,11 +57,12 @@ public class Game
             ProcessInput(); 
             Logic();
             DrawMap();
+            Wait();
         }
 
         DrawResults();
     }
-    
+
     private void GenerateMap()
     {
         Field playerField = _player1.BattleField;
@@ -221,6 +222,13 @@ public class Game
     {
         (_currentPlayer, _currentOpponent) = (_currentOpponent, _currentPlayer);
     }
+    
+    
+    private void Wait()
+    {
+        Thread.Sleep(500);
+    }
+
     
     private void DrawResults()
     {
