@@ -1,33 +1,42 @@
 namespace SeaBattle;
 
+public enum Gamemode
+{
+    PvP,
+    PvE,
+    EvE,
+}
+
 public class Game
 {
-    private Player _player1 = new(true); // !! поки перемикати PvP, PvE, EvE можна змінюючи цей аргумент (true - людина, false - бот) 
-    private Player _player2 = new(false); // !! поки перемикати PvP, PvE, EvE можна змінюючи цей аргумент (true - людина, false - бот) 
+    private Gamemode _gamemode;
+
+    private Player _player1;
+    private Player _player2;
 
     private Player _currentPlayer;
     private Player _currentOpponent;
 
-    public void Start()
+    public void Start(Gamemode gamemode)
     {
+        SetGameMode(gamemode);
+        Init();
         RunGameCycle();
     }
-    
-    private void RunGameCycle()
+
+    private void SetGameMode(Gamemode gamemode)
     {
-        Init();
-
-        while (!IsGameEnded())
+        _gamemode = gamemode;
+        
+        (_player1, _player2) = gamemode switch
         {
-            ProcessInput(); 
-            Logic();
-            DrawMap();
-        }
-
-        DrawResults();
+            Gamemode.PvP => (new Player(true), new Player(true)),
+            Gamemode.PvE => (new Player(true), new Player(false)),
+            Gamemode.EvE => (new Player(false), new Player(false)),
+        };
     }
-
-    private void Init()
+    
+    public void Init()
     {
         _currentPlayer = _player1;
         _currentOpponent = _player2;
@@ -37,6 +46,18 @@ public class Game
         DrawMap();
     }
 
+    private void RunGameCycle()
+    {
+        while (!IsGameEnded())
+        {
+            ProcessInput(); 
+            Logic();
+            DrawMap();
+        }
+
+        DrawResults();
+    }
+    
     private void GenerateMap()
     {
         Field playerField = _player1.BattleField;
@@ -66,7 +87,7 @@ public class Game
         
         Console.Write("  " + horizontalFieldLabel + "\t\t" + horizontalFieldLabel + "\n");
         
-        (bool player1FieldVisibility, bool player2FieldVisibility) = GetFieldsVisibility(_player1, _player2); 
+        (bool player1FieldVisibility, bool player2FieldVisibility) = GetFieldsVisibility(); 
         
         for (int i = 0; i < Field.Height; i++)
         {
@@ -110,27 +131,16 @@ public class Game
             Console.Write(i);
         }
     }
-    
-    
-    private (bool player1FieldVisibility, bool player2FieldVisibility) GetFieldsVisibility(Player player1, Player player2)
-    {
-        if (player1.IsHuman && player2.IsHuman)
-        {
-            return (false, false);
-        }
-        
-        if (!player1.IsHuman && !player2.IsHuman)
-        {
-            return (true, true);
-        }
 
-        if (player1.IsHuman && !player2.IsHuman)
-        {
-            return (true, false);
-        }
 
-        return (false, true);
-    }
+    private (bool player1FieldVisibility, bool player2FieldVisibility) GetFieldsVisibility()
+        => _gamemode switch
+        {
+            Gamemode.PvP => (false, false),
+            Gamemode.PvE => (true, false),
+            Gamemode.EvE => (true, true),
+        };
+    
     private (char value, ConsoleColor color) GetCellCharacteristics((int x, int y) cellPosition, Field currentField, Player opponent, bool areShipsVisible)
     {
         Cell cell = currentField.GetCell(cellPosition.x, cellPosition.y);

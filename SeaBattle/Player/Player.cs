@@ -1,5 +1,3 @@
-using System.Net;
-
 namespace SeaBattle;
 
 public class Player
@@ -48,7 +46,6 @@ public class Player
         
         if(!IsHuman)
             Position = actionPosition;
-        
                 
         Thread.Sleep(500);
         
@@ -81,7 +78,7 @@ public class Player
         {
             ShipCellsDestroyed++;
         }
-        
-        shotCell.hasShot = true;
+
+        shotCell.Shoot();
     }
 }

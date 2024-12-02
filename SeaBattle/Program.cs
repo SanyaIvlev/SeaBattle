@@ -1,1 +1,3 @@
-﻿new SeaBattle.Game().Start();
+﻿using SeaBattle;
+
+new Game().Start(Gamemode.PvE);
