@@ -1,23 +1,12 @@
 namespace SeaBattle;
-public class HumanAction
+public class HumanAction : IAction
 {
-    public char Input { get; private set; }
-
-    public (int x, int y) Position { private get; set; }
     private (int x, int y) _delta;
 
-    public (int x, int y) GetCurrentPosition()
-        => (Position.x, Position.y);
+    public (int x, int y) GetPosition()
+        => _delta;
 
-    public (int x, int y) GetNextPosition()
-    {
-        int x = Position.x + _delta.x;
-        int y = Position.y + _delta.y;
-
-        return (x, y);
-    }
-
-    public void ProcessInput()
+    public void ProcessAction()
     {
         var input = Console.ReadKey();
         var key = input.KeyChar;
@@ -32,8 +21,5 @@ public class HumanAction
             'D' or 'd' => (1, 0),
             _ => (0, 0)
         };
-        
-        Input = key;
-
     }
 }

@@ -11,30 +11,19 @@ public class Player
     public Field BattleField = new();
 
     public bool IsHuman;
-    public (int x, int y) ActionPosition
-    {
-        get
-        {
-            if(IsHuman) 
-                return _humanAction.GetCurrentPosition();
-            
-            return _botAction.GetPosition();
-        }
-    } 
-    private HumanAction _humanAction;
-    private BotAction _botAction;
+    public (int x, int y) Position;
+
+    private IAction _action;
 
     public Player(bool isHuman)
     {
         if (isHuman)
         {
-            _humanAction = new HumanAction();
-            _botAction = null;
+            _action = new HumanAction();
         }
         else
         {
-            _botAction = new BotAction();
-            _humanAction = null;
+            _action = new BotAction();
         }
         
         IsHuman = isHuman;
@@ -42,52 +31,30 @@ public class Player
 
     public void ProcessInput()
     {
-        if(IsHuman) 
-            _humanAction.ProcessInput();
-        else 
-            _botAction.ProcessAction();
+        _action.ProcessAction();
     }
     
     public void Logic(Field enemyField)
     {
         IsEndedTurn = false;
 
-        if (IsHuman)
-        {
-            if (_humanAction.Input == ' ')
-            {
-                (int x, int y) currentPosition = _humanAction.GetCurrentPosition();
-                Cell enemyCell = enemyField.GetCell(currentPosition.x, currentPosition.y);
+        var actionPosition = _action.GetPosition();
 
-                if (enemyCell.hasShot)
-                {
-                    return;
-                }
-            }
-            else
-            {
-                (int x, int y) = _humanAction.GetNextPosition();
-                
-                TryToMoveCursor(x, y);
-                return;
-            }
-        }
-        else
+        if (IsHuman && actionPosition != (0, 0))
         {
-            var botPosition = _botAction.GetPosition();
-            Cell botShootingCell = enemyField.GetCell(botPosition.x, botPosition.y);
-
-            if (botShootingCell.hasShot)
-            {
-                return;
-            }
+            TryToMoveCursor(Position.x + actionPosition.x, Position.y + actionPosition.y);
+            return;
         }
         
+        if(!IsHuman)
+            Position = actionPosition;
+        
+                
         Thread.Sleep(500);
         
-        ref Cell shotCell = ref enemyField.GetCell(ActionPosition.x, ActionPosition.y);
+        ref Cell shotCell = ref enemyField.GetCell(Position.x, Position.y);
         
-        Shoot(ref shotCell);
+        TryShoot(ref shotCell);
 
         if (!shotCell.hasShip)
         {
@@ -99,12 +66,17 @@ public class Player
     {
         if (x < 0 || x >= Field.Width || y < 0 || y >= Field.Height)
             return;
-        
-        _humanAction.Position = (x,y);
+
+        Position = (x, y);
     }
 
-    private void Shoot(ref Cell shotCell)
+    private void TryShoot(ref Cell shotCell)
     {
+        if (shotCell.hasShot)
+        {
+            return;
+        }
+        
         if (shotCell.hasShip)
         {
             ShipCellsDestroyed++;

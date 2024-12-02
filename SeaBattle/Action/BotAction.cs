@@ -1,9 +1,9 @@
 namespace SeaBattle;
 
-public class BotAction
+public class BotAction : IAction
 {
-    public (int x, int y) Position { private get; set; }
-
+    public (int x, int y) Position;
+    
     private Random _random = new Random();
 
     public (int x, int y) GetPosition()
@@ -11,16 +11,9 @@ public class BotAction
     
     public void ProcessAction()
     {
-        (int x, int y) randomShotPosition = GetRandomPosition();
-
-        Position = randomShotPosition;
-    }
-
-    private (int x, int y) GetRandomPosition()
-    {
         int x = _random.Next(Field.Width);
         int y = _random.Next(Field.Height);
         
-        return (x, y);
+        Position = (x, y);
     }
 }

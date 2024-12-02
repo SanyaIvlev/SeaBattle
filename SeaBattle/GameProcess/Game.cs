@@ -55,7 +55,6 @@ public class Game
     private void DrawFields()
     {
         Console.ForegroundColor = ConsoleColor.Magenta;
-        //Console.Write("  Player1's field \t\tPlayer2's field\n\n");
 
         string horizontalFieldLabel = "";
 
@@ -149,12 +148,12 @@ public class Game
                 characteristic = ('\u00a4', ConsoleColor.Blue);
             }
             
-            if (opponent.ActionPosition == cellPosition)
+            if (opponent.Position == cellPosition)
             {
                 characteristic.color = ConsoleColor.Green;
             }
         }
-        else if (opponent.ActionPosition == cellPosition)
+        else if (opponent.Position == cellPosition)
         {
             characteristic = ('*', ConsoleColor.Green);
         }
