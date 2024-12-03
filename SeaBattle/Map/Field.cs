@@ -12,8 +12,14 @@ public class Field
 
     private Random _random = new();
 
-    public ref Cell GetCell(int x, int y) 
-        => ref Cells[y, x];
+    public Cell GetCell(int x, int y) 
+        => Cells[y, x];
+    
+    
+    public void Shoot(int positionX, int positionY)
+    {
+        Cells[positionY, positionX].hasShot = true;
+    }
     
     
     public void GenerateField()
@@ -60,9 +66,6 @@ public class Field
 
         isPlaced = false;
     }
-
-    public int GetShipsNumber()
-        => ShipsCount;
     
     public (int x, int y) GetRandomCell()
     {
@@ -117,4 +120,5 @@ public class Field
 
     private bool GetRandomState()
         => _random.Next(2) == 1;
+
 }

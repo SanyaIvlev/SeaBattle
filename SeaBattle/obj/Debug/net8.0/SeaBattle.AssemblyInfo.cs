@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SeaBattle")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+248e306d9f3b0e168c3ce997b6c3a34a5a3f7d58")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e17c788824aa9ee7a9a706205d62a2851baa3775")]
 [assembly: System.Reflection.AssemblyProductAttribute("SeaBattle")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SeaBattle")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

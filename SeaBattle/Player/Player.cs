@@ -52,14 +52,16 @@ public class Player
         if(!IsHuman)
             Position = actionPosition;
         
-        ref Cell shotCell = ref enemyField.GetCell(Position.x, Position.y);
+        Cell shotCell = enemyField.GetCell(Position.x, Position.y);
         
-        TryShoot(ref shotCell);
+        TryShoot(enemyField, shotCell);
 
         if (!shotCell.hasShip)
         {
             IsEndedTurn = true;
         }
+        
+        Thread.Sleep(500);
     }
 
     private void TryToMoveCursor(int x, int y)
@@ -70,7 +72,7 @@ public class Player
         Position = (x, y);
     }
 
-    private void TryShoot(ref Cell shotCell)
+    private void TryShoot(Field enemyField, Cell shotCell)
     {
         if (shotCell.hasShot)
         {
@@ -81,7 +83,7 @@ public class Player
         {
             ShipCellsDestroyed++;
         }
-
-        shotCell.Shoot();
+    
+        enemyField.Shoot(Position.x, Position.y);
     }
 }

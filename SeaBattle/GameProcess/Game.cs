@@ -57,7 +57,6 @@ public class Game
             ProcessInput(); 
             Logic();
             DrawMap();
-            Wait();
         }
 
         DrawResults();
@@ -222,13 +221,6 @@ public class Game
     {
         (_currentPlayer, _currentOpponent) = (_currentOpponent, _currentPlayer);
     }
-    
-    
-    private void Wait()
-    {
-        Thread.Sleep(500);
-    }
-
     
     private void DrawResults()
     {

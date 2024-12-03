@@ -1,3 +1,3 @@
 ﻿using SeaBattle;
 
-new Game().Start(Gamemode.EvE);
+new Game().Start(Gamemode.PvE);
