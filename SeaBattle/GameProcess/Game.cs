@@ -31,11 +31,17 @@ public class Game
     {
         (_player1, _player2) = _gamemode switch
         {
-            Gamemode.PvP => (new Player(true, "Player1"), new Player(true, "Player2")),
-            Gamemode.PvE => (new Player(true, "Player1"), new Player(false, "Player2")),
-            Gamemode.EvE => (new Player(false, "Player1"), new Player(false, "Player2")),
+            Gamemode.PvP => (CreatePlayer("Player1"), CreatePlayer("Player2")),
+            Gamemode.PvE => (CreatePlayer("Player1"), CreateBot("Player2")),
+            Gamemode.EvE => (CreateBot("Player1"), CreateBot("Player2")),
         };
     }
+
+    private Player CreatePlayer(string name)
+        => new Player(true, name);
+
+    private Player CreateBot(string name)
+        => new Player(false, name);
     
     public void Init()
     {
