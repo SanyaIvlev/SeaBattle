@@ -22,7 +22,9 @@ public class Game
         _gamemode = gamemode;
         SetGameMode();
         
-        Init();
+        RegenerateMap();
+        
+        DrawMap();
         
         RunGameCycle();
     }
@@ -38,12 +40,12 @@ public class Game
     }
 
     private Player CreatePlayer(string name)
-        => new Player(true, name);
+        => new(true, name);
 
     private Player CreateBot(string name)
-        => new Player(false, name);
-    
-    public void Init()
+        => new(false, name);
+
+    private void RegenerateMap()
     {
         _player1.ShipCellsDestroyed = 0;
         _player2.ShipCellsDestroyed = 0;
@@ -52,8 +54,6 @@ public class Game
         _currentOpponent = _player2;
         
         GenerateMap();
-        
-        DrawMap();
     }
 
     private void RunGameCycle()
@@ -63,6 +63,7 @@ public class Game
             ProcessInput(); 
             Logic();
             DrawMap();
+            Wait();
         }
 
         DrawResults();
@@ -198,34 +199,33 @@ public class Game
     
     private void Logic()
     {
+        if (NeedRegenerateFields())
+        {
+            RegenerateMap();
+            _currentPlayer.RoundsWon++;
+            
+            return;
+        }
+        
         _currentPlayer.Logic(_currentOpponent.BattleField);
         
-        if (_currentPlayer.ShipCellsDestroyed == Field.ShipsCount)
-        {
-            EndThisRound();
-        }
-        else if (_currentPlayer.IsEndedTurn)
+        if (_currentPlayer.IsEndedTurn)
         {
             SwitchPlayer();
         }
     }
 
-    private void EndThisRound()
-    {
-        _currentPlayer.RoundsWon++;
-        
-        Console.ForegroundColor = ConsoleColor.Magenta;
-        Console.WriteLine("\n" + _currentPlayer.Name + " wins this round!!!");
-        
-        Thread.Sleep(2000);
-        
-        if(!IsGameEnded())
-            Init();
-    }
+    private bool NeedRegenerateFields()
+        => _currentPlayer.ShipCellsDestroyed == Field.ShipsCount;
 
     private void SwitchPlayer()
     {
         (_currentPlayer, _currentOpponent) = (_currentOpponent, _currentPlayer);
+    }
+    
+    private void Wait()
+    {
+        Thread.Sleep(500);
     }
     
     private void DrawResults()

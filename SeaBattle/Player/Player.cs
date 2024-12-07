@@ -60,8 +60,6 @@ public class Player
         {
             IsEndedTurn = true;
         }
-        
-        Thread.Sleep(500);
     }
 
     private void TryToMoveCursor(int x, int y)
