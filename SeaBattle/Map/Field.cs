@@ -22,7 +22,7 @@ public class Field
     }
     
     
-    public void GenerateField()
+    public void Generate()
     {
         Cells = new Cell[Height, Width];
         

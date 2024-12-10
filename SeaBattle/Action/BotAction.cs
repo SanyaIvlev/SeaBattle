@@ -9,7 +9,7 @@ public class BotAction : IAction
     public (int x, int y) GetPosition()
         => Position;
     
-    public void ProcessAction()
+    public void Process()
     {
         int x = _random.Next(Field.Width);
         int y = _random.Next(Field.Height);

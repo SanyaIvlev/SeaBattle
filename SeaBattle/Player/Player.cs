@@ -34,7 +34,7 @@ public class Player
 
     public void ProcessInput()
     {
-        _action.ProcessAction();
+        _action.Process();
     }
     
     public void Logic(Field enemyField)

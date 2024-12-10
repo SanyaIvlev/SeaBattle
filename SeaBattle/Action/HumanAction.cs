@@ -6,7 +6,7 @@ public class HumanAction : IAction
     public (int x, int y) GetPosition()
         => _delta;
 
-    public void ProcessAction()
+    public void Process()
     {
         var input = Console.ReadKey();
         var key = input.KeyChar;
