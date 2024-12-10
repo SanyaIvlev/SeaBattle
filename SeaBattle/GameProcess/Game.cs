@@ -71,11 +71,11 @@ public class Game
 
     private void GenerateMap()
     {
-        Field playerField = _player1.BattleField;
-        playerField.GenerateField();
+        Field player1Field = _player1.BattleField;
+        player1Field.GenerateField();
         
-        Field botField = _player2.BattleField;
-        botField.GenerateField();
+        Field player2Field = _player2.BattleField;
+        player2Field.GenerateField();
     }
 
     private void DrawMap()
