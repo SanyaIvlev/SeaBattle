@@ -201,8 +201,8 @@ public class Game
     {
         if (NeedRegenerateFields())
         {
-            RegenerateMap();
             _currentPlayer.RoundsWon++;
+            RegenerateMap();
             
             return;
         }
