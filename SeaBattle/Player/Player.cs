@@ -2,9 +2,7 @@ namespace SeaBattle;
 
 public class Player
 {
-    public string Name;
-    
-    public int RoundsWon = 0;
+    public string Name => _profile.Name;
     
     public int ShipCellsDestroyed = 0;
     
@@ -15,9 +13,11 @@ public class Player
     public bool IsHuman;
     public (int x, int y) Position;
 
+    private User _profile;
+    
     private IAction _action;
 
-    public Player(bool isHuman, string name)
+    public Player(bool isHuman, User user)
     {
         if (isHuman)
         {
@@ -29,9 +29,9 @@ public class Player
         }
         
         IsHuman = isHuman;
-        Name = name;
+        _profile = user;
     }
-
+    
     public void ProcessInput()
     {
         _action.Process();
@@ -84,4 +84,5 @@ public class Player
     
         enemyField.Shoot(Position.x, Position.y);
     }
+
 }

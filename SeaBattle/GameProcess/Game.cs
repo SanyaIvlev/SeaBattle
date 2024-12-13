@@ -1,3 +1,5 @@
+using System.Xml;
+
 namespace SeaBattle;
 
 public enum Gamemode
@@ -13,14 +15,20 @@ public class Game
 
     private Player _player1;
     private Player _player2;
+    
+    private int _player1Score;
+    private int _player2Score;
 
     private Player _currentPlayer;
     private Player _currentOpponent;
 
-    public void Start(Gamemode gamemode)
+    private Player _lastRoundWinner;
+
+    public void Start(Gamemode gamemode, (User profile, bool isHuman) firstPlayer, (User profile, bool isHuman) secondPlayer)
     {
         _gamemode = gamemode;
-        SetGameMode();
+        
+        InitializePlayers(firstPlayer, secondPlayer);
         
         RegenerateMap();
         
@@ -29,21 +37,11 @@ public class Game
         RunGameCycle();
     }
 
-    private void SetGameMode()
+    private void InitializePlayers((User profile, bool isHuman) firstPlayer, (User profile, bool isHuman) secondPlayer)
     {
-        (_player1, _player2) = _gamemode switch
-        {
-            Gamemode.PvP => (CreatePlayer("Player1"), CreatePlayer("Player2")),
-            Gamemode.PvE => (CreatePlayer("Player1"), CreateBot("Player2")),
-            Gamemode.EvE => (CreateBot("Player1"), CreateBot("Player2")),
-        };
+        _player1 = new(firstPlayer.isHuman, firstPlayer.profile);
+        _player2 = new(secondPlayer.isHuman, secondPlayer.profile);
     }
-
-    private Player CreatePlayer(string name)
-        => new(true, name);
-
-    private Player CreateBot(string name)
-        => new(false, name);
 
     private void RegenerateMap()
     {
@@ -66,7 +64,7 @@ public class Game
             Wait();
         }
 
-        DrawResults();
+        EndGame();
     }
 
     private void GenerateMap()
@@ -190,7 +188,7 @@ public class Game
     }
     
     private bool IsGameEnded()
-        => _player1.RoundsWon == 3 || _player2.RoundsWon == 3; 
+        => _player1Score == 3 || _player2Score == 3; 
     
     private void ProcessInput()
     {
@@ -201,8 +199,13 @@ public class Game
     {
         if (NeedRegenerateFields())
         {
-            _currentPlayer.RoundsWon++;
+            _lastRoundWinner = _currentPlayer;
             RegenerateMap();
+
+            if (_lastRoundWinner == _player1)
+                _player1Score++;
+            else
+                _player2Score++;
             
             return;
         }
@@ -228,12 +231,39 @@ public class Game
         Thread.Sleep(500);
     }
     
-    private void DrawResults()
+    private void EndGame()
     {
+        if(_lastRoundWinner.IsHuman) 
+            UpdateWinnerProfile();
+        
         Console.ForegroundColor = ConsoleColor.Magenta;
         
-        Console.Write("\n" + _currentPlayer.Name + " has won the game!");
+        Console.Write("\n" + _lastRoundWinner.Name + " has won the game!");
     }
 
+    private void UpdateWinnerProfile()
+    {
+        XmlDocument storedUsersInfo = new XmlDocument();
+        storedUsersInfo.Load("Users.xml");
+        
+        var userProfiles = storedUsersInfo.DocumentElement;
+    
+        foreach (XmlNode userProfile in userProfiles.ChildNodes)
+        {
+            var userNameNode = userProfile.ChildNodes[0];
+            
+            var userNameText = userNameNode.InnerText;
+            
+            if (userNameText == _lastRoundWinner.Name)
+            {
+                var victoriesNode = userProfile.ChildNodes[1];
+                var victoriesText = victoriesNode.InnerText;
 
+                int updatedVictories = int.Parse(victoriesText) + 1;
+                
+                userProfile.ChildNodes[1].InnerText = Convert.ToString(updatedVictories);
+            }
+        }
+        storedUsersInfo.Save("Users.xml");
+    }
 }
