@@ -1,9 +1,12 @@
+using System.Text;
 using System.Xml;
 
 namespace SeaBattle;
 
 public class Boot
 {
+    private const int ID_LENGTH = 16;
+    
     private List<User> _existingUsers;
 
     private User _user1;
@@ -14,12 +17,15 @@ public class Boot
     private string _userNode;
     private string _nameNode;
     private string _victoriesNode;
+    private string _idNode;
 
     private User _playerProfile;
     
     private Gamemode _gameMode;
     private bool _isPlayer1Human;
     private bool _isPlayer2Human;
+
+    private Random _random;
 
     public Boot()
     {
@@ -28,12 +34,14 @@ public class Boot
         _userNode = "user";
         _nameNode = "name";
         _victoriesNode = "victories";
-        
+        _idNode = "id";
         
         XmlDocument usersSave = new XmlDocument();
         usersSave.Load("Users.xml");
 
         storedUsersInfo = usersSave;
+        
+        _random = new Random();
     }
     
     public void StartApplication()
@@ -69,6 +77,8 @@ public class Boot
 
     private void TrySetProfiles()
     {
+        Console.Clear();
+        
         User? user1;
         User? user2;
 
@@ -122,7 +132,9 @@ public class Boot
 
     private User CreateBotProfile(string name)
     {
-        return new(name, 0);
+        string temporaryBotId = GetRandomCharSequence();
+        
+        return new(name, 0, temporaryBotId);
     }
 
     private void InitializeUserProfile()
@@ -133,6 +145,7 @@ public class Boot
         {
             string userName = "";
             int victories = 0;
+            string id = "";
             
             foreach (XmlNode userInfo in userProfile.ChildNodes)
             {
@@ -145,9 +158,14 @@ public class Boot
                 {
                     victories = int.Parse(userInfo.InnerText);
                 }
+
+                if (userInfo.Name == _idNode)
+                {
+                    id = userInfo.InnerText;
+                }
             }
             
-            User existingUser = new User(userName, victories);
+            User existingUser = new User(userName, victories, id);
             _existingUsers.Add(existingUser);
         }
     }
@@ -192,9 +210,11 @@ public class Boot
         
         string name = Console.ReadLine();
 
+        string id = GetRandomCharSequence();
+        
         StoreProfile(name);
 
-        return new(name, 0);
+        return new(name, 0, id);
     }
 
     private void StoreProfile(string name)
@@ -205,15 +225,22 @@ public class Boot
         
         XmlElement nameElement = storedUsersInfo.CreateElement(_nameNode);
         XmlElement victoriesElement = storedUsersInfo.CreateElement(_victoriesNode);
+
+        XmlElement profileIDElement = storedUsersInfo.CreateElement(_idNode);
         
         XmlText nameText = storedUsersInfo.CreateTextNode(name);
         XmlText victoriesText = storedUsersInfo.CreateTextNode("0");
         
+        string randomSequence = GetRandomCharSequence();
+        XmlText profileIDText = storedUsersInfo.CreateTextNode(randomSequence);
+        
         nameElement.AppendChild(nameText);
         victoriesElement.AppendChild(victoriesText);
+        profileIDElement.AppendChild(profileIDText);
         
         userElement.AppendChild(nameElement);
         userElement.AppendChild(victoriesElement);
+        userElement.AppendChild(profileIDElement);
         
         root?.AppendChild(userElement);
         
@@ -221,6 +248,18 @@ public class Boot
         
     }
 
+    private string GetRandomCharSequence()
+    {
+        string randomSequence = "";
+        
+        for (int i = 0; i < ID_LENGTH; i++)
+        {
+            char randomSymbol = (char)_random.Next(97, 123);
+            randomSequence+= randomSymbol;
+        }
+        
+        return randomSequence;
+    }
 
     private void StartGame()
     {

@@ -1,7 +1,10 @@
+using System.Text;
+
 namespace SeaBattle;
 
 public class Player
 {
+    public string ID => _profile.ID;
     public string Name => _profile.Name;
     
     public int ShipCellsDestroyed = 0;
@@ -56,7 +59,7 @@ public class Player
         
         TryShoot(enemyField, shotCell);
 
-        if (!shotCell.hasShip)
+        if (!shotCell.hasShip && !shotCell.hasShot)
         {
             IsEndedTurn = true;
         }

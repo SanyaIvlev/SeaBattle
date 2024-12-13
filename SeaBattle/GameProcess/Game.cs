@@ -250,11 +250,11 @@ public class Game
     
         foreach (XmlNode userProfile in userProfiles.ChildNodes)
         {
-            var userNameNode = userProfile.ChildNodes[0];
+            var userIDNode = userProfile.ChildNodes[2];
             
-            var userNameText = userNameNode.InnerText;
+            var userIDText = userIDNode.InnerText;
             
-            if (userNameText == _lastRoundWinner.Name)
+            if (userIDText == _lastRoundWinner.ID)
             {
                 var victoriesNode = userProfile.ChildNodes[1];
                 var victoriesText = victoriesNode.InnerText;
