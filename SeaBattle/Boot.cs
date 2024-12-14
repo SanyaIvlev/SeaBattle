@@ -132,9 +132,9 @@ public class Boot
 
     private User CreateBotProfile(string name)
     {
-        string temporaryBotId = GetRandomCharSequence();
+        string BotID = GetRandomCharSequence();
         
-        return new(name, 0, temporaryBotId);
+        return new(name, 0, BotID);
     }
 
     private void InitializeUserProfile()

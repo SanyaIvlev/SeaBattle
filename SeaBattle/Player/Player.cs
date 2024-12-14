@@ -35,6 +35,11 @@ public class Player
         _profile = user;
     }
     
+    public void Reset()
+    {
+        ShipCellsDestroyed = 0;
+    }
+    
     public void ProcessInput()
     {
         _action.Process();
@@ -87,5 +92,4 @@ public class Player
     
         enemyField.Shoot(Position.x, Position.y);
     }
-
 }

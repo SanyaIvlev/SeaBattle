@@ -45,8 +45,8 @@ public class Game
 
     private void RegenerateMap()
     {
-        _player1.ShipCellsDestroyed = 0;
-        _player2.ShipCellsDestroyed = 0;
+        _player1.Reset();
+        _player2.Reset();
         
         _currentPlayer = _player1;
         _currentOpponent = _player2;
@@ -128,6 +128,9 @@ public class Game
             
             Console.WriteLine();
         }
+        
+        Console.Write(_player1.Name + " destroyed " + _player2.ShipCellsDestroyed + " decks!\n");
+        Console.Write(_player2.Name + " destroyed " + _player1.ShipCellsDestroyed + " decks!\n");
     }
 
     private void WriteRowNumber(int i)
