@@ -129,8 +129,8 @@ public class Game
             Console.WriteLine();
         }
         
-        Console.Write(_player1.Name + " destroyed " + _player2.ShipCellsDestroyed + " decks!\n");
-        Console.Write(_player2.Name + " destroyed " + _player1.ShipCellsDestroyed + " decks!\n");
+        Console.Write(_player1.Name + " destroyed " + _player1.ShipCellsDestroyed + " decks!\n");
+        Console.Write(_player2.Name + " destroyed " + _player2.ShipCellsDestroyed + " decks!\n");
     }
 
     private void WriteRowNumber(int i)

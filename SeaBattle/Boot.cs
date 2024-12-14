@@ -46,6 +46,8 @@ public class Boot
     
     public void StartApplication()
     {
+        ResetLoadedProfiles();
+        
         InitializeUserProfile();
 
         SetGameMode();
@@ -55,8 +57,15 @@ public class Boot
         StartGame();
     }
 
+    private void ResetLoadedProfiles()
+    {
+        _existingUsers.Clear();
+    }
+
     private void SetGameMode()
     {
+        Console.Clear();
+        
         Console.WriteLine("Select Game Mode!");
         Console.WriteLine("1 - PvP");
         Console.WriteLine("2 - PvE");
@@ -66,6 +75,12 @@ public class Boot
         char key = input.KeyChar;
         
         int selected = key - '0';
+
+        if (selected is < 1 or > 3)
+        {
+            StartApplication();
+            return;
+        }
         
         _gameMode = selected switch
         {
@@ -195,11 +210,13 @@ public class Boot
             return CreateNewProfile();
         }
         
-        if (selected > 0 && _existingUsers.Count > 0 )
+        if (selected > 0 && selected <= _existingUsers.Count && _existingUsers.Count > 0 )
         {
             return _existingUsers[selected - 1];
         }
-
+        
+        StartApplication();
+        
         return null;
     }
 
@@ -219,6 +236,8 @@ public class Boot
 
     private void StoreProfile(string name)
     {
+        // тут трохи захардкоджено, але я не бачу як це можна винести нормально
+        
         XmlElement? root = storedUsersInfo.DocumentElement;
         
         XmlElement userElement = storedUsersInfo.CreateElement(_userNode);
