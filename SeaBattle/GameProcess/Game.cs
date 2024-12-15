@@ -12,6 +12,7 @@ public enum Gamemode
 public class Game
 {
     private Gamemode _gamemode;
+    private string _savePath;
 
     private Player _player1;
     private Player _player2;
@@ -24,9 +25,10 @@ public class Game
 
     private Player _lastRoundWinner;
 
-    public void Start(Gamemode gamemode, (User profile, bool isHuman) firstPlayer, (User profile, bool isHuman) secondPlayer)
+    public void Start(Gamemode gamemode, (User profile, bool isHuman) firstPlayer, (User profile, bool isHuman) secondPlayer, string savePath)
     {
         _gamemode = gamemode;
+        _savePath = savePath;
         
         InitializePlayers(firstPlayer, secondPlayer);
         
@@ -247,7 +249,7 @@ public class Game
     private void UpdateWinnerProfile()
     {
         XmlDocument storedUsersInfo = new XmlDocument();
-        storedUsersInfo.Load("Users.xml");
+        storedUsersInfo.Load(_savePath);
         
         var userProfiles = storedUsersInfo.DocumentElement;
     

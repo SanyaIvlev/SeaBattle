@@ -1,3 +1,4 @@
+using System.ComponentModel.Design;
 using System.Text;
 using System.Xml;
 
@@ -12,6 +13,9 @@ public class Boot
     private User _user1;
     private User _user2;
 
+    private string xmlPath;
+    private string xmlName;
+    
     private XmlDocument storedUsersInfo;
 
     private string _userNode;
@@ -30,14 +34,25 @@ public class Boot
     public Boot()
     {
         _existingUsers = new List<User>();
+
+        xmlName = "/Users.xml";
         
         _userNode = "user";
         _nameNode = "name";
         _victoriesNode = "victories";
         _idNode = "id";
         
+        string currentDirectory = Directory.GetCurrentDirectory();
+        var debugFolder = Directory.GetParent(currentDirectory);
+        var binFolder = Directory.GetParent(debugFolder.FullName);
+        var projectFolder = Directory.GetParent(binFolder.FullName);
+        
+        string filePath = Path.GetFullPath(projectFolder.FullName + xmlName);
+        
+        xmlPath = filePath;
+        
         XmlDocument usersSave = new XmlDocument();
-        usersSave.Load("Users.xml");
+        usersSave.Load(xmlPath);
 
         storedUsersInfo = usersSave;
         
@@ -283,7 +298,7 @@ public class Boot
     private void StartGame()
     {
         Game game = new();
-        game.Start(_gameMode, (_user1, _isPlayer1Human), (_user2, _isPlayer2Human));
+        game.Start(_gameMode, (_user1, _isPlayer1Human), (_user2, _isPlayer2Human), xmlPath);
     }
 
 }
