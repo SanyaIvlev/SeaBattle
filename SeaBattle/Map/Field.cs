@@ -4,7 +4,7 @@ public class Field
     public const int Height = 10;
     public const int Width = 10;
 
-    public const int ShipsCount = 20;
+    public int DecksCount = 0;
     private List<string> _ships = new(10) { "####", "###", "###", "##", "##", "##", "#", "#", "#", "#" };
 
     private Cell[,] Cells;
@@ -41,7 +41,7 @@ public class Field
                 }
 
                 TryPlaceShip(isHorizontal, ship, out isPlaced);
-
+                
                 i++;
             }
         }
@@ -54,16 +54,20 @@ public class Field
         if (isHorizontal && CanPlaceHorizontal(ship.Length, randomCell))
         {
             PlaceHorizontal(ship.Length, randomCell);
+            
+            DecksCount++;
             isPlaced = true;
             return;
         }
         if(!isHorizontal && CanPlaceVerticalShip(ship.Length, randomCell))
         {
             PlaceVertical(ship.Length, randomCell);
+            
+            DecksCount++;
             isPlaced = true;
             return;
         }
-
+        
         isPlaced = false;
     }
     

@@ -7,7 +7,7 @@ public class Player
     public string ID => _profile.ID;
     public string Name => _profile.Name;
     
-    public int ShipCellsDestroyed = 0;
+    public int DecksDestroyed = 0;
     
     public bool IsEndedTurn { get; private set; }
 
@@ -37,7 +37,7 @@ public class Player
     
     public void Reset()
     {
-        ShipCellsDestroyed = 0;
+        DecksDestroyed = 0;
     }
     
     public void ProcessInput()
@@ -87,7 +87,7 @@ public class Player
         
         if (shotCell.hasShip)
         {
-            ShipCellsDestroyed++;
+            DecksDestroyed++;
         }
     
         enemyField.Shoot(Position.x, Position.y);
