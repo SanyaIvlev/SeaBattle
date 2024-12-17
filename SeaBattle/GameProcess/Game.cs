@@ -1,5 +1,3 @@
-using System.Xml;
-
 namespace SeaBattle;
 
 public enum Gamemode
@@ -11,8 +9,9 @@ public enum Gamemode
 
 public class Game
 {
+    public Player Winner;
+    
     private Gamemode _gamemode;
-    private string _savePath;
 
     private Player _player1;
     private Player _player2;
@@ -20,10 +19,9 @@ public class Game
     private Player _currentPlayer;
     private Player _currentOpponent;
 
-    public void Start(Gamemode gamemode, (User profile, bool isHuman) firstPlayer, (User profile, bool isHuman) secondPlayer, string savePath)
+    public void Start(Gamemode gamemode, (User profile, bool isHuman) firstPlayer, (User profile, bool isHuman) secondPlayer)
     {
         _gamemode = gamemode;
-        _savePath = savePath;
         
         InitializePlayers(firstPlayer, secondPlayer);
         
@@ -242,40 +240,12 @@ public class Game
         else
             winner = _currentOpponent;
         
-        PlayerController gameWinnerController = winner.Controller;
         User gameWinnerProfile = winner.Profile;
-        
-        if(gameWinnerController.IsHuman) 
-            UpdateWinnerProfile(gameWinnerProfile);
         
         Console.ForegroundColor = ConsoleColor.Magenta;
         
         Console.Write("\n" + gameWinnerProfile.Name + " has won the game!");
-    }
 
-    private void UpdateWinnerProfile(User winner)
-    {
-        XmlDocument storedUsersInfo = new XmlDocument();
-        storedUsersInfo.Load(_savePath);
-        
-        var userProfiles = storedUsersInfo.DocumentElement;
-    
-        foreach (XmlNode userProfile in userProfiles.ChildNodes)
-        {
-            var userIDNode = userProfile.ChildNodes[2];
-            
-            var userIDText = userIDNode.InnerText;
-            
-            if (userIDText == winner.ID)
-            {
-                var victoriesNode = userProfile.ChildNodes[1];
-                var victoriesText = victoriesNode.InnerText;
-
-                int updatedVictories = int.Parse(victoriesText) + 1;
-                
-                userProfile.ChildNodes[1].InnerText = Convert.ToString(updatedVictories);
-            }
-        }
-        storedUsersInfo.Save(_savePath);
+        Winner = winner;
     }
 }

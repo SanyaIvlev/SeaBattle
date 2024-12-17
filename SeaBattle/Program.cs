@@ -1,2 +1,2 @@
 ﻿using SeaBattle;
-new Boot().StartApplication();
+new Application().Start();

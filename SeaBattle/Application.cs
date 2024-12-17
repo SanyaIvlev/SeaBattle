@@ -1,12 +1,12 @@
-using System.ComponentModel.Design;
-using System.Text;
 using System.Xml;
 
 namespace SeaBattle;
 
-public class Boot
+public class Application
 {
     private const int ID_LENGTH = 16;
+
+    private Game _game;
     
     private List<User> _existingUsers;
 
@@ -16,7 +16,7 @@ public class Boot
     private string xmlPath;
     private string xmlName;
     
-    private XmlDocument storedUsersInfo;
+    private XmlDocument _storedUsersInfo;
 
     private string _userNode;
     private string _nameNode;
@@ -31,7 +31,7 @@ public class Boot
 
     private Random _random;
 
-    public Boot()
+    public Application()
     {
         _existingUsers = new List<User>();
 
@@ -54,12 +54,12 @@ public class Boot
         XmlDocument usersSave = new XmlDocument();
         usersSave.Load(xmlPath);
 
-        storedUsersInfo = usersSave;
+        _storedUsersInfo = usersSave;
         
         _random = new Random();
     }
     
-    public void StartApplication()
+    public void Start()
     {
         ResetLoadedProfiles();
         
@@ -70,11 +70,46 @@ public class Boot
         TrySetProfiles();
 
         StartGame();
+
+        SaveWinnerData();
     }
 
     private void ResetLoadedProfiles()
     {
         _existingUsers.Clear();
+    }
+
+    private void InitializeUserProfile()
+    {
+        var userProfiles = _storedUsersInfo.DocumentElement;
+        
+        foreach (XmlNode userProfile in userProfiles.ChildNodes)
+        {
+            string userName = "";
+            int victories = 0;
+            string id = "";
+            
+            foreach (XmlNode userInfo in userProfile.ChildNodes)
+            {
+                if (userInfo.Name == _nameNode)
+                {
+                    userName = userInfo.InnerText;
+                }
+                
+                if (userInfo.Name == _victoriesNode)
+                {
+                    victories = int.Parse(userInfo.InnerText);
+                }
+
+                if (userInfo.Name == _idNode)
+                {
+                    id = userInfo.InnerText;
+                }
+            }
+            
+            User existingUser = new User(userName, victories, id);
+            _existingUsers.Add(existingUser);
+        }
     }
 
     private void SetGameMode()
@@ -93,7 +128,7 @@ public class Boot
 
         if (selected is < 1 or > 3)
         {
-            StartApplication();
+            Start();
             return;
         }
         
@@ -148,11 +183,11 @@ public class Boot
             
             user1 = CreateBotProfile("Bot 1");
             user2 = CreateBotProfile("Bot 2");
-        }
+        } 
 
         if (user1 == null || user2 == null)
         {
-            StartApplication();
+            Start();
             return;
         }
         
@@ -167,39 +202,6 @@ public class Boot
         return new(name, 0, BotID);
     }
 
-    private void InitializeUserProfile()
-    {
-        var userProfiles = storedUsersInfo.DocumentElement;
-        
-        foreach (XmlNode userProfile in userProfiles.ChildNodes)
-        {
-            string userName = "";
-            int victories = 0;
-            string id = "";
-            
-            foreach (XmlNode userInfo in userProfile.ChildNodes)
-            {
-                if (userInfo.Name == _nameNode)
-                {
-                    userName = userInfo.InnerText;
-                }
-                
-                if (userInfo.Name == _victoriesNode)
-                {
-                    victories = int.Parse(userInfo.InnerText);
-                }
-
-                if (userInfo.Name == _idNode)
-                {
-                    id = userInfo.InnerText;
-                }
-            }
-            
-            User existingUser = new User(userName, victories, id);
-            _existingUsers.Add(existingUser);
-        }
-    }
-    
     private void DisplayProfiles()
     {
         Console.ForegroundColor = ConsoleColor.Magenta;
@@ -211,7 +213,7 @@ public class Boot
         {
             Console.WriteLine($"{i + 1} - {_existingUsers[i].Name} / {_existingUsers[i].Victories} victories! ");
         }
-    }
+    } 
     
     private User? SelectProfile()
     {
@@ -230,7 +232,7 @@ public class Boot
             return _existingUsers[selected - 1];
         }
         
-        StartApplication();
+        Start();
         
         return null;
     }
@@ -251,22 +253,20 @@ public class Boot
 
     private void StoreProfile(string name)
     {
-        // тут трохи захардкоджено, але я не бачу як це можна винести нормально
+        XmlElement? root = _storedUsersInfo.DocumentElement;
         
-        XmlElement? root = storedUsersInfo.DocumentElement;
+        XmlElement userElement = _storedUsersInfo.CreateElement(_userNode);
         
-        XmlElement userElement = storedUsersInfo.CreateElement(_userNode);
-        
-        XmlElement nameElement = storedUsersInfo.CreateElement(_nameNode);
-        XmlElement victoriesElement = storedUsersInfo.CreateElement(_victoriesNode);
+        XmlElement nameElement = _storedUsersInfo.CreateElement(_nameNode);
+        XmlElement victoriesElement = _storedUsersInfo.CreateElement(_victoriesNode);
 
-        XmlElement profileIDElement = storedUsersInfo.CreateElement(_idNode);
+        XmlElement profileIDElement = _storedUsersInfo.CreateElement(_idNode);
         
-        XmlText nameText = storedUsersInfo.CreateTextNode(name);
-        XmlText victoriesText = storedUsersInfo.CreateTextNode("0");
+        XmlText nameText = _storedUsersInfo.CreateTextNode(name);
+        XmlText victoriesText = _storedUsersInfo.CreateTextNode("0");
         
         string randomSequence = GetRandomCharSequence();
-        XmlText profileIDText = storedUsersInfo.CreateTextNode(randomSequence);
+        XmlText profileIDText = _storedUsersInfo.CreateTextNode(randomSequence);
         
         nameElement.AppendChild(nameText);
         victoriesElement.AppendChild(victoriesText);
@@ -278,7 +278,7 @@ public class Boot
         
         root?.AppendChild(userElement);
         
-        storedUsersInfo.Save("Users.xml");
+        _storedUsersInfo.Save("Users.xml");
         
     }
 
@@ -297,8 +297,44 @@ public class Boot
 
     private void StartGame()
     {
-        Game game = new();
-        game.Start(_gameMode, (_user1, _isPlayer1Human), (_user2, _isPlayer2Human), xmlPath);
+        _game = new();
+        _game.Start(_gameMode, (_user1, _isPlayer1Human), (_user2, _isPlayer2Human));
+    }
+    
+    private void SaveWinnerData()
+    {
+        Player gameWinner = _game.Winner; 
+        PlayerController controller = gameWinner.Controller;
+        
+        if (!controller.IsHuman)
+            return;
+        
+        _storedUsersInfo.Load(xmlPath);
+        
+        var userProfiles = _storedUsersInfo.DocumentElement;
+    
+        foreach (XmlNode userProfile in userProfiles.ChildNodes)
+        {
+            var userIDNode = userProfile.ChildNodes[2];
+            
+            var userIDText = userIDNode.InnerText;
+            
+            User winnerProfile = gameWinner.Profile;
+            
+            if (userIDText == winnerProfile.ID)
+            {
+                var victoriesNode = userProfile.ChildNodes[1];
+                var victoriesText = victoriesNode.InnerText;
+
+                int updatedVictories = int.Parse(victoriesText) + 1;
+                
+                userProfile.ChildNodes[1].InnerText = Convert.ToString(updatedVictories);
+
+                break;
+            }
+        }
+        _storedUsersInfo.Save(xmlPath);
     }
 
+    
 }

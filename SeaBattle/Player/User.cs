@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace SeaBattle;
 
 public class User
