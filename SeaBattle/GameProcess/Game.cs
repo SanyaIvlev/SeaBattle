@@ -185,7 +185,7 @@ public class Game
     }
     
     private bool IsGameEnded()
-        => _player1.Score == 3 || _player2.Score == 3; 
+        =>  _player1.Score == 3 || _player2.Score == 3; 
     
     private void ProcessInput()
     {

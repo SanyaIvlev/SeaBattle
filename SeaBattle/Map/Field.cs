@@ -4,7 +4,7 @@ public class Field
     public const int Height = 10;
     public const int Width = 10;
 
-    public int DecksCount = 0;
+    public int DecksCount;
     private List<string> _ships = new(10) { "####", "###", "###", "##", "##", "##", "#", "#", "#", "#" };
 
     private Cell[,] Cells;
@@ -24,6 +24,7 @@ public class Field
     
     public void Generate()
     {
+        DecksCount = 0;
         Cells = new Cell[Height, Width];
         
         foreach (string ship in _ships)
@@ -35,7 +36,7 @@ public class Field
             
             while (!isPlaced)
             {
-                if (i > 50)
+                if (i > 150)
                 {
                     break;
                 }
@@ -55,7 +56,7 @@ public class Field
         {
             PlaceHorizontal(ship.Length, randomCell);
             
-            DecksCount++;
+            DecksCount += ship.Length;
             isPlaced = true;
             return;
         }
@@ -63,7 +64,7 @@ public class Field
         {
             PlaceVertical(ship.Length, randomCell);
             
-            DecksCount++;
+            DecksCount += ship.Length;
             isPlaced = true;
             return;
         }

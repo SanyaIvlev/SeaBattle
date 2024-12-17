@@ -4,7 +4,7 @@ public class Player
 {
     public PlayerController Controller;
     public User Profile;
-    public int Score = 0;
+    public int Score;
 
     public Player(User profile, bool isHuman)
     {
@@ -15,12 +15,11 @@ public class Player
     public void Reset()
     {
         Controller.DecksDestroyed = 0;
-        Score = 0;
 
         var field = Controller.BattleField;
         field.Generate();
     }
-
+    
     public void GetVictory()
     {
         Score++;
