@@ -1,95 +1,28 @@
-using System.Text;
-
 namespace SeaBattle;
 
 public class Player
 {
-    public string ID => _profile.ID;
-    public string Name => _profile.Name;
-    
-    public int DecksDestroyed;
-    
-    public bool IsEndedTurn { get; private set; }
+    public PlayerController Controller;
+    public User Profile;
+    public int Score = 0;
 
-    public Field BattleField = new();
-
-    public bool IsHuman;
-    public (int x, int y) Position;
-
-    private User _profile;
-    
-    private IAction _action;
-
-    public Player(bool isHuman, User user)
+    public Player(User profile, bool isHuman)
     {
-        if (isHuman)
-        {
-            _action = new HumanAction();
-        }
-        else
-        {
-            _action = new BotAction();
-        }
-        
-        IsHuman = isHuman;
-        _profile = user;
+        Controller = new(isHuman);
+        Profile = profile;
     }
-    
+
     public void Reset()
     {
-        DecksDestroyed = 0;
-    }
-    
-    public void ProcessInput()
-    {
-        _action.Process();
-    }
-    
-    public void Logic(Field enemyField)
-    {
-        IsEndedTurn = false;
+        Controller.DecksDestroyed = 0;
+        Score = 0;
 
-        var actionPosition = _action.GetPosition();
-
-        if (IsHuman && actionPosition != (0, 0))
-        {
-            TryToMoveCursor(Position.x + actionPosition.x, Position.y + actionPosition.y);
-            return;
-        }
-        
-        if(!IsHuman)
-            Position = actionPosition;
-        
-        Cell shotCell = enemyField.GetCell(Position.x, Position.y);
-        
-        TryShoot(enemyField, shotCell);
-
-        if (!shotCell.hasShip && !shotCell.hasShot)
-        {
-            IsEndedTurn = true;
-        }
+        var field = Controller.BattleField;
+        field.Generate();
     }
 
-    private void TryToMoveCursor(int x, int y)
+    public void GetVictory()
     {
-        if (x < 0 || x >= Field.Width || y < 0 || y >= Field.Height)
-            return;
-
-        Position = (x, y);
-    }
-
-    private void TryShoot(Field enemyField, Cell shotCell)
-    {
-        if (shotCell.hasShot)
-        {
-            return;
-        }
-        
-        if (shotCell.hasShip)
-        {
-            DecksDestroyed++;
-        }
-    
-        enemyField.Shoot(Position.x, Position.y);
+        Score++;
     }
 }

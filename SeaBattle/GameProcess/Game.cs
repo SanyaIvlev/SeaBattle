@@ -17,13 +17,8 @@ public class Game
     private Player _player1;
     private Player _player2;
     
-    private int _player1Score;
-    private int _player2Score;
-
     private Player _currentPlayer;
     private Player _currentOpponent;
-
-    private Player _lastRoundWinner;
 
     public void Start(Gamemode gamemode, (User profile, bool isHuman) firstPlayer, (User profile, bool isHuman) secondPlayer, string savePath)
     {
@@ -41,8 +36,8 @@ public class Game
 
     private void InitializePlayers((User profile, bool isHuman) firstPlayer, (User profile, bool isHuman) secondPlayer)
     {
-        _player1 = new(firstPlayer.isHuman, firstPlayer.profile);
-        _player2 = new(secondPlayer.isHuman, secondPlayer.profile);
+        _player1 = new(firstPlayer.profile, firstPlayer.isHuman);
+        _player2 = new(secondPlayer.profile, secondPlayer.isHuman);
     }
 
     private void RegenerateMap()
@@ -52,8 +47,6 @@ public class Game
         
         _currentPlayer = _player1;
         _currentOpponent = _player2;
-        
-        GenerateMap();
     }
 
     private void RunGameCycle()
@@ -69,15 +62,6 @@ public class Game
         EndGame();
     }
 
-    private void GenerateMap()
-    {
-        Field player1Field = _player1.BattleField;
-        player1Field.Generate();
-        
-        Field player2Field = _player2.BattleField;
-        player2Field.Generate();
-    }
-
     private void DrawMap()
     {
         Console.Clear();
@@ -86,8 +70,14 @@ public class Game
     
     private void DrawFields()
     {
+        User profile1 = _player1.Profile;
+        User profile2 = _player2.Profile;
+        
+        PlayerController controller1 = _player1.Controller;
+        PlayerController controller2 = _player2.Controller;
+        
         Console.ForegroundColor = ConsoleColor.Magenta;
-        Console.Write(_player1.Name + "\t\t\t\t" + _player2.Name + "\n");
+        Console.Write(profile1.Name + "\t\t\t\t" + profile2.Name + "\n");
         
         string horizontalFieldLabel = "";
 
@@ -106,11 +96,11 @@ public class Game
             Console.ForegroundColor = ConsoleColor.Magenta;
             WriteRowNumber(i + 1);
             
-            Field currentField = _player1.BattleField;
+            Field currentField = controller1.BattleField;
             
             for (int j = 0; j < Field.Width; j++)
             {
-                var cellCharacteristics = GetCellCharacteristics((j,i), currentField, _player2, player1FieldVisibility);
+                var cellCharacteristics = GetCellCharacteristics((j,i), currentField, controller2, player1FieldVisibility);
 
                 Console.ForegroundColor = cellCharacteristics.color;
                 Console.Write(cellCharacteristics.value + " ");
@@ -118,11 +108,11 @@ public class Game
             
             Console.Write("\t\t");
             
-            currentField = _player2.BattleField;
+            currentField = controller2.BattleField;
             
             for (int j = 0; j < Field.Width; j++)
             {
-                var cellCharacteristics = GetCellCharacteristics((j,i), currentField, _player1, player2FieldVisibility);
+                var cellCharacteristics = GetCellCharacteristics((j,i), currentField, controller1, player2FieldVisibility);
                 
                 Console.ForegroundColor = cellCharacteristics.color;
                 Console.Write(cellCharacteristics.value + " ");
@@ -133,8 +123,8 @@ public class Game
 
         Console.ForegroundColor = ConsoleColor.Magenta;
         
-        Console.Write(_player1.Name + " destroyed " + _player1.DecksDestroyed + " decks!\n");
-        Console.Write(_player2.Name + " destroyed " + _player2.DecksDestroyed + " decks!\n");
+        Console.Write(profile1.Name + " destroyed " + controller1.DecksDestroyed + " decks!\n");
+        Console.Write(profile2.Name + " destroyed " + controller2.DecksDestroyed + " decks!\n");
     }
 
     private void WriteRowNumber(int i)
@@ -158,7 +148,7 @@ public class Game
             Gamemode.EvE => (true, true),
         };
     
-    private (char value, ConsoleColor color) GetCellCharacteristics((int x, int y) cellPosition, Field currentField, Player opponent, bool areShipsVisible)
+    private (char value, ConsoleColor color) GetCellCharacteristics((int x, int y) cellPosition, Field currentField, PlayerController opponent, bool areShipsVisible)
     {
         Cell cell = currentField.GetCell(cellPosition.x, cellPosition.y);
 
@@ -195,31 +185,30 @@ public class Game
     }
     
     private bool IsGameEnded()
-        => _player1Score == 3 || _player2Score == 3; 
+        => _player1.Score == 3 || _player2.Score == 3; 
     
     private void ProcessInput()
     {
-        _currentPlayer.ProcessInput();
+        var controller = _currentPlayer.Controller;
+        controller.ProcessInput();
     }
     
     private void Logic()
     {
         if (NeedRegenerateFields())
         {
-            _lastRoundWinner = _currentPlayer;
+            _currentPlayer.GetVictory();
             RegenerateMap();
-
-            if (_lastRoundWinner == _player1)
-                _player1Score++;
-            else
-                _player2Score++;
             
             return;
         }
         
-        _currentPlayer.Logic(_currentOpponent.BattleField);
+        var currentController = _currentPlayer.Controller;
+        var opponentController = _currentOpponent.Controller;
         
-        if (_currentPlayer.IsEndedTurn)
+        currentController.Logic(opponentController.BattleField);
+        
+        if (currentController.IsEndedTurn)
         {
             SwitchPlayer();
         }
@@ -227,9 +216,10 @@ public class Game
 
     private bool NeedRegenerateFields()
     {
-        var currentField = _currentPlayer.BattleField;
+        var currentController = _currentPlayer.Controller;
+        var currentField = currentController.BattleField;
         
-        return _currentPlayer.DecksDestroyed == currentField.DecksCount;
+        return currentController.DecksDestroyed == currentField.DecksCount;
     }
         
 
@@ -245,15 +235,25 @@ public class Game
     
     private void EndGame()
     {
-        if(_lastRoundWinner.IsHuman) 
-            UpdateWinnerProfile();
+        Player winner;
+        
+        if (_currentPlayer.Score > _currentOpponent.Score)
+            winner = _currentPlayer;
+        else
+            winner = _currentOpponent;
+        
+        PlayerController gameWinnerController = winner.Controller;
+        User gameWinnerProfile = winner.Profile;
+        
+        if(gameWinnerController.IsHuman) 
+            UpdateWinnerProfile(gameWinnerProfile);
         
         Console.ForegroundColor = ConsoleColor.Magenta;
         
-        Console.Write("\n" + _lastRoundWinner.Name + " has won the game!");
+        Console.Write("\n" + gameWinnerProfile.Name + " has won the game!");
     }
 
-    private void UpdateWinnerProfile()
+    private void UpdateWinnerProfile(User winner)
     {
         XmlDocument storedUsersInfo = new XmlDocument();
         storedUsersInfo.Load(_savePath);
@@ -266,7 +266,7 @@ public class Game
             
             var userIDText = userIDNode.InnerText;
             
-            if (userIDText == _lastRoundWinner.ID)
+            if (userIDText == winner.ID)
             {
                 var victoriesNode = userProfile.ChildNodes[1];
                 var victoriesText = victoriesNode.InnerText;
@@ -276,6 +276,6 @@ public class Game
                 userProfile.ChildNodes[1].InnerText = Convert.ToString(updatedVictories);
             }
         }
-        storedUsersInfo.Save("Users.xml");
+        storedUsersInfo.Save(_savePath);
     }
 }
